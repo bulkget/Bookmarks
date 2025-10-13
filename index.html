@@ -208,9 +208,10 @@
       };
 
       // open icon
-      li.querySelector('.open').onclick = (e) => {
-        e.stopPropagation(); window.open(item.url, '_blank');
-      };
+     
+      // เปิดในหน้าเดิม (ทำงานได้ใน WebView)
+li.querySelector('.main').onclick = () => location.href = item.url;
+li.querySelector('.open').onclick = (e) => { e.stopPropagation(); location.href = item.url; };
 
       // menu
       const menu = li.querySelector('.menu');
