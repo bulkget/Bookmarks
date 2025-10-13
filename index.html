@@ -6,67 +6,63 @@
 <title>Bookmarks</title>
 <style>
   :root {
-    /* Dark clean theme */
-    --bg: #000;
-    --card: #0b0b0b;
-    --text: #e5e7eb;
-    --muted: rgba(255,255,255,.6);
-    --ring: #000;
-    --accent: #fff;
-    --star: #ffd166;
-    --danger: #ef4444;
-    --btn: #0b0b0b;
+    --bg:#000;
+    --card:#0b0b0b;
+    --text:#e5e7eb;
+    --muted:rgba(255,255,255,.6);
+    --ring:#000;
+    --accent:#fff;
+    --star:#ffd166;
+    --danger:#ef4444;
+    --btn:#0b0b0b;
   }
 
   * {
-    box-sizing: border-box;
-    font-family: -apple-system, system-ui, Segoe UI, Roboto, sans-serif;
-    font-size: 15.5px; /* จำกัดไม่เกิน 16 */
-    line-height: 1.6;
+    box-sizing:border-box;
+    font-family:-apple-system,system-ui,Segoe UI,Roboto,sans-serif;
+    font-size:15.5px;
+    line-height:1.6;
   }
 
-  body { margin:0; background:var(--bg); color:var(--text); }
+  body {
+    margin:0;
+    background:var(--bg);
+    color:var(--text);
+    -webkit-tap-highlight-color: transparent !important;
+  }
+
   .wrap { max-width:860px; margin:auto; padding:16px 14px 90px; }
 
-  /* top bar */
-  .brand { font-size:16px; font-weight:700; letter-spacing:.4px; margin:6px 2px 14px; }
+  .brand { font-size:16px; font-weight:700; margin:6px 2px 14px; }
 
-  /* filter chips */
   .chips { display:flex; gap:10px; flex-wrap:wrap; margin:8px 2px 14px; }
   .chip {
     padding:10px 16px; border-radius:12px; border:1px solid var(--ring);
-    background:var(--btn); color:var(--text); cursor:pointer; font-weight:600; font-size:15px;
+    background:var(--btn); color:var(--text); cursor:pointer; font-weight:600;
     transition:none;
   }
-  .chip.active { background:#fff; border-color:#fff; color:#000; }
+  .chip.active { background:#fff; color:#000; }
 
-  /* list */
   .list { display:flex; flex-direction:column; gap:14px; }
   .item {
     background:var(--card); border:1px solid var(--ring); border-radius:18px;
     padding:14px; display:flex; align-items:center; gap:12px;
     box-shadow:0 10px 26px rgba(0,0,0,.25);
-    transition:background .1s ease;
   }
 
   .ico {
-    width:34px; height:34px; flex:0 0 34px; border-radius:9px; display:grid; place-items:center;
-    background:#0e1116; border:1px solid #0e1116; overflow:hidden;
+    width:34px; height:34px; flex:0 0 34px; border-radius:9px;
+    display:grid; place-items:center; background:#0e1116; overflow:hidden;
   }
-  .ico img { width:20px; height:20px; filter:grayscale(.1); }
+  .ico img { width:20px; height:20px; }
 
   .main { flex:1; min-width:0; cursor:pointer; }
-  .title {
-    font-weight:700; margin-bottom:2px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
-    font-size:15.5px;
-  }
-  .url {
-    font-size:14px; color:var(--muted); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
-  }
+  .title { font-weight:700; margin-bottom:2px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .url { font-size:14px; color:var(--muted); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
 
   .btns { display:flex; gap:6px; }
   .btn {
-    width:38px; height:38px; border-radius:12px; border:1px solid var(--ring);
+    width:38px; height:38px; border-radius:12px; border:1px solid transparent;
     background:#0a0d11; display:grid; place-items:center; cursor:pointer;
     transition:none;
   }
@@ -74,74 +70,73 @@
   .star.active svg { fill:var(--star); stroke:var(--star); }
   .open { color:#cfd6de; }
 
-  /* Menu sheet (Edit / Copy / Delete) */
+  /* menu sheet */
   .menu { position:relative; }
   .menu .sheet {
-    position:absolute; right:0; top:46px; background:#0d0f13; border:1px solid #1f2937;
-    border-radius:12px; box-shadow:0 14px 32px rgba(0,0,0,.45); overflow:hidden; display:none;
+    position:absolute; right:0; top:46px; background:#0d0f13;
+    border:1px solid #1f2937; border-radius:12px;
+    box-shadow:0 14px 32px rgba(0,0,0,.45);
+    overflow:hidden; display:none;
   }
   .menu.open .sheet { display:block; }
   .menu .sheet button {
-    display:block; min-width:200px; padding:12px 16px; background:transparent; border:0;
-    border-top:1px solid #1f2937; text-align:left; cursor:pointer;
-    font-size:15px; color:#e5e7eb; transition:none;
+    display:block; min-width:200px; padding:12px 16px;
+    background:transparent; border:0; border-top:1px solid #1f2937;
+    text-align:left; cursor:pointer; color:#e5e7eb;
+    transition:none;
   }
   .menu .sheet button:first-child { border-top:0; }
   .menu .sheet button:active { background:rgba(255,255,255,.08); }
   .menu .sheet .danger { color:#ff5b5b; }
 
-  /* Floating Add Button */
   .fab {
-    position:fixed; right:18px; bottom:20px; width:62px; height:62px; border-radius:20px;
-    background:#fff; border:1px solid #333; display:grid; place-items:center;
-    box-shadow:0 14px 30px rgba(255,255,255,.15); cursor:pointer;
+    position:fixed; right:18px; bottom:20px;
+    width:62px; height:62px; border-radius:20px;
+    background:#fff; display:grid; place-items:center;
+    box-shadow:0 14px 30px rgba(255,255,255,.15);
+    cursor:pointer; border:0;
   }
   .fab svg { width:26px; height:26px; color:#000; }
 
-  /* Modal Add/Edit */
   .dim {
-    position:fixed; inset:0; background:rgba(0,0,0,.45); display:none; align-items:center; justify-content:center;
-    padding:0 14px;
+    position:fixed; inset:0; background:rgba(0,0,0,.45);
+    display:none; align-items:center; justify-content:center; padding:0 14px;
   }
   .modal {
-    background:#0f141b; border-radius:12px; padding:16px; border:1px solid var(--ring);
-    width:100%; max-width:560px; box-shadow:0 18px 40px rgba(0,0,0,.45);
+    background:#0f141b; border-radius:12px; padding:16px;
+    border:1px solid #1f1f1f; width:100%; max-width:560px;
   }
-  .row { display:flex; flex-direction:column; gap:8px; margin:8px 0; }
   input {
-    width:100%; padding:12px 14px; border-radius:10px; border:1px solid var(--ring);
-    background:#0c1117; color:var(--text); font-size:15.5px;
+    width:100%; padding:12px 14px; border-radius:10px;
+    border:1px solid #1f1f1f; background:#0c1117; color:var(--text);
   }
 
-  /* Save / Cancel buttons */
   .actions { display:flex; gap:10px; margin-top:8px; }
   .primary, .ghost {
     background:#fff; color:#000; border:1px solid #333;
-    padding:12px 16px; border-radius:10px; cursor:pointer; font-weight:600; font-size:15.5px;
-    transition:none;
+    padding:12px 16px; border-radius:10px; cursor:pointer;
   }
 
-  .empty { color:var(--muted); text-align:center; margin-top:40px; font-size:15px; }
+  .empty { color:var(--muted); text-align:center; margin-top:40px; }
 
-  /* UX polish */
-  * { -webkit-tap-highlight-color: transparent; }
-  .item, .main, .title, .url, .btn, .chip {
-    user-select:none; -webkit-user-select:none; -ms-user-select:none;
+  /* UX refine */
+  *:focus, *:focus-visible, *:active {
+    outline:none !important;
+    box-shadow:none !important;
+    border-color:transparent !important;
   }
-  .item:active, .btn:active, .chip:active, .fab:active {
+  .item:active, .btn:active, .chip:active, .fab:active, .menu .sheet button:active {
     background:rgba(255,255,255,.08) !important;
-    transform:none !important;
   }
-  .btn:focus, .chip:focus, .fab:focus, .menu .sheet button:focus {
-    outline:none; box-shadow:none;
+
+  .chip:hover, .btn:hover, .menu .sheet button:hover {
+    background:transparent !important;
   }
-  .btn:focus-visible, .chip:focus-visible, .fab:focus-visible {
-    box-shadow:0 0 0 3px rgba(255,255,255,.18);
-  }
+
   ::selection { background:transparent; }
   input:focus {
-    outline:none !important; border-color:#2a3644; box-shadow:none !important;
-    background:#0c1117;
+    background:#0c1117; border-color:#1f1f1f;
+    box-shadow:none !important; outline:none !important;
   }
 </style></head>
 <body>
