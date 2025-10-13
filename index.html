@@ -1,35 +1,78 @@
-<!doctype html><html lang="en"><head>
+<!doctype html>
+<html lang="th">
+<head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Bookmarks - BulkGet Viewer</title>
+<title>Bookmarks • BulkGet Viewer</title>
 <style>
-  body{margin:0;padding:16px;font:16px/1.6 system-ui,Segoe UI,Roboto,Arial;background:#0b0b0b;color:#eee}
-  .wrap{max-width:760px;margin:auto}
-  input,button{font:16px;padding:10px;border-radius:10px;border:0}
-  input{width:100%;background:#1a1a1a;color:#fff;margin:6px 0}
-  button{background:#3b82f6;color:#fff;margin:6px 0}
-  ul{list-style:none;padding:0;margin:0}
-  li{background:#131313;border-radius:12px;padding:10px 12px;margin:8px 0;display:flex;gap:10px;align-items:center}
-  .title{flex:1}
-  .url{color:#9ec1ff;font-size:13px}
-  .del{background:#ef4444}
+  :root{
+    --bg:#0b0b0b; --panel:#111315; --muted:#9aa4b2; --text:#e9eef5;
+    --accent:#3b82f6; --accent-2:#2563eb; --danger:#ef4444; --ok:#22c55e;
+    --input:#171a1e; --ring:#1f2937; --card:#0f1216;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--text);font:16px/1.6 system-ui,Segoe UI,Roboto,Arial}
+  .wrap{max-width:760px;margin:auto;padding:20px}
+  header{display:flex;justify-content:space-between;align-items:center;margin:4px 0 14px}
+  h1{margin:0;font-size:28px;letter-spacing:.4px}
+  .pill{font-size:12px;color:var(--muted);background:#0e1114;border:1px solid var(--ring);padding:6px 10px;border-radius:999px}
+  .card{background:linear-gradient(180deg,#0e1114, var(--panel));border:1px solid var(--ring);border-radius:16px;padding:14px}
+  form{display:grid;grid-template-columns:1fr 1fr auto;gap:10px}
+  input{background:var(--input);border:1px solid var(--ring);color:var(--text);padding:12px 12px;border-radius:12px;outline:none}
+  input:focus{border-color:var(--accent)}
+  button{border:0;border-radius:12px;padding:12px 16px;background:var(--accent);color:#fff;cursor:pointer;font-weight:600}
+  button:hover{background:var(--accent-2)}
+  button:disabled{opacity:.5;cursor:not-allowed}
+  .empty{color:var(--muted);text-align:center;padding:28px 12px}
+  ul{list-style:none;margin:16px 0 0;padding:0;display:flex;flex-direction:column;gap:10px}
+  li{background:var(--card);border:1px solid var(--ring);border-radius:14px;padding:12px 14px;display:flex;gap:12px;align-items:center}
+  .meta{flex:1;min-width:0}
+  .title{font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .url{font-size:13px;color:#9ec1ff;text-decoration:none;word-break:break-all}
+  .row-actions{display:flex;gap:8px}
+  .btn{padding:8px 10px;border-radius:10px;border:1px solid var(--ring);background:#151a1f;color:var(--text);font-size:13px;cursor:pointer}
+  .btn:hover{border-color:#2b3440}
+  .btn-danger{background:#1a0f11;color:#ffd7dd;border-color:#3a0d13}
+  .btn-danger:hover{background:#2a1216}
+  .badge{font-size:12px;color:#bfe6c8;background:#0f1a13;border:1px solid #214932;border-radius:999px;padding:4px 8px}
+  .toolbar{display:flex;justify-content:space-between;align-items:center;margin-top:6px}
+  .hint{font-size:12px;color:var(--muted)}
+  .toast{position:fixed;inset:auto 16px 16px auto;background:#12181f;border:1px solid var(--ring);color:#eaf5ff;padding:10px 14px;border-radius:10px;opacity:0;transform:translateY(8px);transition:.18s}
+  .toast.show{opacity:1;transform:none}
+  @media (max-width:720px){form{grid-template-columns:1fr;}}
 </style>
-</head><body><div class="wrap">
-  <h2>Bookmarks</h2>
-  <form id="f">
-    <input id="name" placeholder="Title (optional)">
-    <input id="url"  placeholder="https://">
-    <button type="submit">Add</button>
-  </form>
-  <ul id="list"></ul>
-</div>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <h1>Bookmarks</h1>
+      <span id="userBadge" class="pill">กำลังเชื่อมต่อ…</span>
+    </header>
+
+    <div class="card">
+      <form id="f" autocomplete="off">
+        <input id="name" placeholder="Title (optional)">
+        <input id="url"  placeholder="https:// ตัวอย่าง: https://google.com">
+        <button id="addBtn" type="submit" disabled>Add</button>
+      </form>
+      <div class="toolbar">
+        <span class="hint">ลิงก์ที่เพิ่มจะบันทึกแบบเรียลไทม์เฉพาะผู้ใช้ (Anonymous)</span>
+        <span id="count" class="badge">0 items</span>
+      </div>
+      <ul id="list"></ul>
+      <div id="empty" class="empty">ยังไม่มีรายการ • ลองเพิ่มลิงก์แรกของคุณเลย</div>
+    </div>
+  </div>
+
+  <div id="toast" class="toast">Saved</div>
+
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
   import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js";
   import { getDatabase, ref, onChildAdded, onChildRemoved, set, remove, push }
     from "https://www.gstatic.com/firebasejs/10.12.5/firebase-database.js";
 
-  // ⬇️ ใส่ config จริงของโปรเจกต์คุณ (เอาจาก Project settings > General > Web app)
+  // TODO: ใส่ config จริงของโปรเจกต์คุณ (Project settings → General → Web app)
   const firebaseConfig = {
     apiKey: "YOUR_API_KEY",
     authDomain: "YOUR_PROJECT.firebaseapp.com",
@@ -42,52 +85,86 @@
   const auth = getAuth(app);
   const db   = getDatabase(app);
 
-  const params   = new URLSearchParams(location.search);
-  const deviceId = params.get("device") || "guest";
+  // DOM
+  const listEl  = document.getElementById('list');
+  const emptyEl = document.getElementById('empty');
+  const countEl = document.getElementById('count');
+  const userEl  = document.getElementById('userBadge');
+  const form    = document.getElementById('f');
+  const addBtn  = document.getElementById('addBtn');
+  const nameEl  = document.getElementById('name');
+  const urlEl   = document.getElementById('url');
+  const toast   = document.getElementById('toast');
 
-  const listEl = document.getElementById('list');
-  const form   = document.getElementById('f');
-  const nameEl = document.getElementById('name');
-  const urlEl  = document.getElementById('url');
-
-  const base = ref(db, `bookmarks/${deviceId}`);
+  // utils
   const dom = {};
+  const fmtCount = n => `${n} item${n!==1?'s':''}`;
+  const showToast = (msg)=>{ toast.textContent = msg; toast.classList.add('show'); setTimeout(()=>toast.classList.remove('show'), 1200); };
 
-  function addRow(item){
-    const li = document.createElement('li');
-    li.id = item.id;
+  // enable/disable Add ตามความถูกต้องของ URL
+  const isURL = v => /^https?:\/\/.+/i.test(v.trim());
+  urlEl.addEventListener('input', ()=> addBtn.disabled = !isURL(urlEl.value));
+
+  function updateEmpty(){
+    const has = Object.keys(dom).length>0;
+    emptyEl.style.display = has?'none':'block';
+    countEl.textContent = fmtCount(Object.keys(dom).length);
+  }
+
+  function addRow(basePath, item){
+    const li = document.createElement('li'); li.id = item.id; li.dataset.base = basePath;
     li.innerHTML = `
-      <div class="title">
-        <div>${(item.name || new URL(item.url).host).replace(/[<>]/g,'')}</div>
+      <div class="meta">
+        <div class="title">${(item.name || safeHost(item.url))}</div>
         <a class="url" href="${item.url}" target="_blank" rel="noopener">${item.url}</a>
       </div>
-      <button class="del">Delete</button>`;
-    li.querySelector('.del').onclick = ()=> remove(ref(db, `bookmarks/${deviceId}/${item.id}`));
-    li.onclick = (e)=>{ if(e.target.tagName!=="BUTTON"){ location.href=item.url; } };
-    listEl.prepend(li); dom[item.id]=li;
+      <div class="row-actions">
+        <button class="btn" data-act="open">Open</button>
+        <button class="btn" data-act="copy">Copy</button>
+        <button class="btn btn-danger" data-act="del">Delete</button>
+      </div>`;
+    li.addEventListener('click',(e)=>{
+      const act = e.target?.dataset?.act;
+      if(!act) return;
+      if(act==='open') location.href = item.url;
+      if(act==='copy'){ navigator.clipboard?.writeText(item.url); showToast('Copied URL'); }
+      if(act==='del'){
+        if(confirm('ลบรายการนี้?')) remove(ref(db, `${basePath}/${item.id}`));
+      }
+      e.stopPropagation();
+    });
+    listEl.prepend(li); dom[item.id]=li; updateEmpty();
   }
-  function removeRow(id){ const el = dom[id]; if(el){ el.remove(); delete dom[id]; } }
+  function removeRow(id){ const el = dom[id]; if(el){ el.remove(); delete dom[id]; updateEmpty(); } }
+  const safeHost = (u)=>{ try{ return new URL(u).host; } catch{ return u; } };
 
-  // ล็อกอินแบบ Anonymous แล้วค่อย subscribe ข้อมูล + bind form
+  // Anonymous login → ใช้ auth.uid เป็นคีย์ (ตรงกับ Rules)
   signInAnonymously(auth).catch(console.error);
 
   onAuthStateChanged(auth, (user)=>{
-    if(!user) return;
+    if(!user){ userEl.textContent = 'กำลังเชื่อมต่อ…'; return; }
+    const uid = user.uid;
+    userEl.textContent = `Signed in (anon) • ${uid.slice(0,6)}…`;
+    const basePath = `bookmarks/${uid}`;
+    const baseRef  = ref(db, basePath);
 
     // realtime listeners
-    onChildAdded(base, (snap)=> addRow(snap.val()));
-    onChildRemoved(base, (snap)=> removeRow(snap.key));
+    onChildAdded(baseRef, (snap)=> addRow(basePath, snap.val()));
+    onChildRemoved(baseRef, (snap)=> removeRow(snap.key));
 
-    // add
+    // submit
     form.onsubmit = async (e)=>{
       e.preventDefault();
-      const url = (urlEl.value||"").trim();
-      if(!/^https?:\/\//i.test(url)){ alert("URL ต้องขึ้นต้นด้วย http(s)://"); return; }
-      const name = (nameEl.value||"").trim();
-      const newRef = push(base);
-      const item = { id: newRef.key, name, url, ts: Date.now() };
+      const url  = urlEl.value.trim();
+      if(!isURL(url)){ showToast('URL ต้องขึ้นต้นด้วย http(s)://'); return; }
+      const name = nameEl.value.trim();
+      const newRef = push(baseRef);
+      const item = { id:newRef.key, name, url, ts: Date.now() };
       await set(newRef, item);
-      nameEl.value=""; urlEl.value="";
+      nameEl.value = ''; urlEl.value = ''; addBtn.disabled = true;
+      showToast('Saved');
     };
   });
 </script>
+</body>
+</html>
