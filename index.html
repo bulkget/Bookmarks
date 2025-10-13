@@ -1,167 +1,336 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Privacy Policy - BulkGet Viewer (Mini Browser)</title>
-  <style>
-    :root {
-      --bg: #0b0f14;
-      --card: #11161d;
-      --text: #e5e7eb;
-      --muted: #9ca3af;
-      --link: #60a5fa;
-      --ring: #1e2631;
-    }
-    * {
-      box-sizing: border-box;
-      font-family: -apple-system, system-ui, Segoe UI, Roboto, sans-serif;
-    }
-    body {
-      margin: 0;
-      padding: 20px;
-      background: var(--bg);
-      color: var(--text);
-      line-height: 1.7;
-      font-size: 15.5px; /* ไม่เกิน 16 */
-    }
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Bookmarks</title>
+<style>
+  :root{
+    /* Dark theme */
+    --bg:#0b0f14;
+    --card:#11161d;
+    --text:#e5e7eb;
+    --muted:#96a0ad;
+    --ring:#1e2631;
+    --accent:#0a84ff;
+    --star:#ffd166;
+    --danger:#ef4444;
+    --btn:#151c25;
+    --btnHover:#0f3c73;
+  }
+  *{
+    box-sizing:border-box;
+    font-family:-apple-system,system-ui,Segoe UI,Roboto,sans-serif;
+    font-size:15.5px; /* จำกัดไม่เกิน 16 */
+    line-height:1.6;
+  }
+  body{margin:0;background:var(--bg);color:var(--text)}
+  .wrap{max-width:860px;margin:auto;padding:16px 14px 90px}
 
-    h1, h2 {
-      color: #fff;
-      font-weight: 600;
-    }
+  /* top bar */
+  .brand{font-size:16px;font-weight:700;letter-spacing:.4px;margin:6px 2px 14px}
 
-    h1 {
-      text-align: center;
-      margin: 0 0 10px;
-      font-size: 20px;
-    }
+  /* filter chips */
+  .chips{display:flex;gap:10px;flex-wrap:wrap;margin:8px 2px 14px}
+  .chip{
+    padding:10px 16px;border-radius:12px;border:1px solid var(--ring);
+    background:var(--btn);color:var(--text);cursor:pointer;font-weight:600;font-size:15px
+  }
+  .chip.active{
+    background:#fff;
+    border-color:#fff;
+    color:#000;
+  }
 
-    h2 {
-      font-size: 16px;
-      margin-top: 28px;
-      margin-bottom: 10px;
-      color: #f1f1f1;
-    }
+  /* list */
+  .list{display:flex;flex-direction:column;gap:14px}
+  .item{
+    background:var(--card);border:1px solid var(--ring);border-radius:18px;
+    padding:14px;display:flex;align-items:center;gap:12px;
+    box-shadow:0 10px 26px rgba(0,0,0,.25);
+  }
+  .ico{
+    width:34px;height:34px;flex:0 0 34px;border-radius:9px;display:grid;place-items:center;
+    background:#0e141b;border:1px solid var(--ring);overflow:hidden
+  }
+  .ico img{width:20px;height:20px;filter:grayscale(.1)}
+  .main{flex:1;min-width:0;cursor:pointer}
+  .title{font-weight:700;margin-bottom:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:15.5px}
+  .url{font-size:14px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 
-    .date {
-      text-align: center;
-      font-size: 13.5px;
-      color: var(--muted);
-      margin-bottom: 28px;
-    }
+  .btns{display:flex;gap:6px}
+  .btn{
+    width:38px;height:38px;border-radius:12px;border:1px solid var(--ring);
+    background:var(--btn);display:grid;place-items:center;cursor:pointer;
+    transition:background .15s ease,border-color .15s ease
+  }
+  .btn:hover{background:#121a23;border-color:#2a3644}
+  .btn svg{width:18px;height:18px;stroke:#c6d0dc}
+  .star.active svg{fill:var(--star);stroke:var(--star)}
+  .open{color:#c6d0dc}
+  .menu{position:relative}
+  .menu .sheet{
+    position:absolute;right:0;top:46px;background:#0f141b;border:1px solid var(--ring);
+    border-radius:12px;box-shadow:0 16px 32px rgba(0,0,0,.35);overflow:hidden;display:none
+  }
+  .menu.open .sheet{display:block}
+  .sheet button{
+    display:block;min-width:180px;padding:10px 14px;background:transparent;border:0;
+    border-bottom:1px solid var(--ring);text-align:left;cursor:pointer;font-size:15px;color:var(--text)
+  }
+  .sheet button:hover{background:#121a23}
+  .sheet button:last-child{border-bottom:0}
+  .sheet .danger{color:var(--danger)}
 
-    a {
-      color: var(--link);
-      text-decoration: none;
-    }
+  /* FAB (add button) */
+  .fab{
+    position:fixed;right:18px;bottom:20px;width:62px;height:62px;border-radius:20px;
+    background:#fff;border:1px solid #333;display:grid;place-items:center;
+    box-shadow:0 14px 30px rgba(255,255,255,.15);cursor:pointer
+  }
+  .fab svg{width:26px;height:26px;color:#000}
 
-    a:hover {
-      text-decoration: underline;
-    }
+  /* modal (Add link) */
+  .dim{
+    position:fixed;inset:0;background:rgba(0,0,0,.45);display:none;align-items:center;justify-content:center;
+    padding:0 14px;
+  }
+  .modal{
+    background:#0f141b;border-radius:12px;
+    padding:16px;border:1px solid var(--ring);width:100%;max-width:560px;
+    box-shadow:0 18px 40px rgba(0,0,0,.45)
+  }
+  .row{display:flex;flex-direction:column;gap:8px;margin:8px 0}
+  input{
+    width:100%;padding:12px 14px;border-radius:10px;border:1px solid var(--ring);
+    background:#0c1117;color:var(--text);font-size:15.5px
+  }
 
-    ul {
-      margin-left: 22px;
-      padding-left: 0;
-    }
+  /* ปุ่ม Save / Cancel */
+  .actions{display:flex;gap:10px;margin-top:8px}
+  .primary, .ghost{
+    background:#fff;color:#000;border:1px solid #333;
+    padding:12px 16px;border-radius:10px;cursor:pointer;font-weight:600;font-size:15.5px
+  }
+  .primary:hover, .ghost:hover{background:#e6e6e6}
 
-    li {
-      margin-bottom: 8px;
-    }
+  .empty{color:var(--muted);text-align:center;margin-top:40px;font-size:15px}
 
-    .card {
-      background: var(--card);
-      border: 1px solid var(--ring);
-      border-radius: 12px;
-      padding: 24px;
-      max-width: 900px;
-      margin: 0 auto 50px;
-      box-shadow: 0 8px 26px rgba(0,0,0,0.4);
-    }
+  /* ปิด tap highlight */
+  * { -webkit-tap-highlight-color: transparent; }
 
-    p {
-      margin: 0 0 12px;
-      color: var(--text);
-    }
-  </style>
+  /* ไม่ให้ select ข้อความ */
+  .item, .main, .title, .url, .btn, .chip {
+    user-select: none;
+    -webkit-user-select: none;
+    -ms-user-select: none;
+  }
+
+  /* เอฟเฟกต์ตอนกด */
+  .item:active { 
+    transform: translateY(1px);
+    background:#0f141b;
+    transition: background .08s ease, transform .08s ease;
+  }
+
+  /* focus effect */
+  .btn:focus-visible, .chip:focus-visible, .fab:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(255,255,255,.2);
+  }
+
+  ::selection { background: transparent; }    
+
+  /* input focus */
+  input:focus {
+    outline: none !important;
+    border-color: #2a3644;
+    box-shadow: none !important;
+    background: #0c1117;
+  }
+</style>
 </head>
 <body>
-  <div class="card">
-    <h1>Privacy Policy for BulkGet Viewer</h1>
-    <div class="date">
-      Effective Date: September 20, 2025 <br>
-      Privacy Policy URL: 
-      <a href="https://bulkget.github.io/Privacy-Policy/" target="_blank">
-        https://bulkget.github.io/Privacy-Policy/
-      </a>
-    </div>
+<div class="wrap">
+  <div class="brand">Bookmarks</div>
 
-    <h2>1. Introduction</h2>
-    <p>
-      BulkGet Viewer (“Application”, “we”, “our”, or “us”) is a lightweight WebView mini browser developed by BULKGET DEV.TS.  
-      We respect your privacy and are committed to protecting user information in accordance with Google Play Developer Policies.
-    </p>
-
-    <h2>2. Information Collection and Use</h2>
-    <p>
-      - The Application does not directly collect, store, or share any personally identifiable information.<br>
-      - We may use trusted third-party services (for example, Google AdMob) that collect information for analytics and advertising purposes.<br>
-      - Collected information may include non-personal data such as device model, system version, app interactions, and general usage statistics.
-    </p>
-
-    <h2>3. Log Data</h2>
-    <p>
-      The Application does not collect log data directly. However, certain third-party services (such as Google Play Services) may automatically collect anonymous diagnostic or performance data to improve service reliability.
-    </p>
-
-    <h2>4. Cookies</h2>
-    <p>
-      The Application itself does not use cookies. Some integrated third-party services (e.g., Google AdMob) may use cookies or similar tracking technologies to deliver better ad experiences.
-    </p>
-
-    <h2>5. Third-party Services</h2>
-    <p>
-      The Application integrates the following third-party services, which may collect limited information in accordance with their own privacy policies:
-    </p>
-    <ul>
-      <li><a href="https://policies.google.com/privacy" target="_blank">Google Play Services</a></li>
-      <li><a href="https://support.google.com/admob/answer/6128543" target="_blank">Google AdMob</a></li>
-    </ul>
-
-    <h2>6. Data Sharing and Disclosure</h2>
-    <p>
-      We do not sell, trade, or otherwise share any user data with third parties, except as required by applicable law or as necessary to maintain third-party service functionality.
-    </p>
-
-    <h2>7. User Choices and Controls</h2>
-    <p>
-      - You may manage app permissions in your device settings.<br>
-      - You may opt out of personalized advertising through your Google account’s ad settings.
-    </p>
-
-    <h2>8. Security</h2>
-    <p>
-      We take reasonable precautions to protect user data. However, please note that no system is completely secure, and we cannot guarantee absolute protection.
-    </p>
-
-    <h2>9. Children’s Privacy</h2>
-    <p>
-      This Application is designed for general audiences and not directed toward children under 13 years old.  
-      We do not knowingly collect personal information from children. If you believe that your child has provided personal data, please contact us immediately.
-    </p>
-
-    <h2>10. Changes to This Privacy Policy</h2>
-    <p>
-      This Privacy Policy may be updated from time to time. Users are encouraged to review this page periodically.  
-      Updates are effective once published at: 
-      <a href="https://bulkget.github.io/Privacy-Policy/" target="_blank">https://bulkget.github.io/Privacy-Policy/</a>
-    </p>
-
-    <h2>11. Contact Us</h2>
-    <p>
-      If you have questions about this Privacy Policy or our practices, please contact us at:<br>
-      <strong>Email:</strong> <a href="mailto:Bulkget.app@gmail.com">Bulkget.app@gmail.com</a>
-    </p>
+  <div class="chips">
+    <div class="chip active" data-filter="all">All</div>
+    <div class="chip" data-filter="fav">Favorites</div>
   </div>
+
+  <div id="list" class="list"></div>
+  <div id="empty" class="empty" style="display:none">No items yet</div>
+</div>
+
+<!-- FAB -->
+<button id="fab" class="fab" aria-label="Add">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+    <path d="M12 5v14M5 12h14"/>
+  </svg>
+</button>
+
+<!-- Modal Add/Edit -->
+<div id="dim" class="dim">
+  <div class="modal">
+    <h3 id="modalTitle" style="margin:4px 0 6px;font-size:15.5px">Add Bookmark</h3>
+    <div class="row">
+      <input id="titleIn" placeholder="Title (optional)">
+      <input id="urlIn" placeholder="https://example.com">
+    </div>
+    <div class="actions">
+      <button id="saveBtn" class="primary">Save</button>
+      <button id="cancelBtn" class="ghost">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<script>
+(() => {
+  const $ = sel => document.querySelector(sel);
+  const $$ = sel => document.querySelectorAll(sel);
+
+  // storage
+  const KEY = 'bg_ios_cards';
+  let items = JSON.parse(localStorage.getItem(KEY) || '[]');
+  let filter = 'all';
+  let editingId = null;
+
+  // el
+  const listEl = $('#list');
+  const emptyEl = $('#empty');
+  const fab = $('#fab');
+  const dim = $('#dim');
+  const titleIn = $('#titleIn');
+  const urlIn = $('#urlIn');
+  const modalTitle = $('#modalTitle');
+
+  // utils
+  const save = () => localStorage.setItem(KEY, JSON.stringify(items));
+  const favicon = url => {
+    try { return 'https://www.google.com/s2/favicons?domain=' + new URL(url).hostname + '&sz=64'; }
+    catch { return 'https://www.google.com/s2/favicons?domain=example.com&sz=64'; }
+  };
+  const isURL = v => /^https?:\/\/.+/i.test(v || '');
+
+  // render
+  function render() {
+    listEl.innerHTML = '';
+    const data = items.filter(x => filter==='fav' ? x.fav : true);
+    emptyEl.style.display = data.length ? 'none' : 'block';
+
+    data.forEach(item => {
+      const li = document.createElement('div');
+      li.className = 'item';
+      li.innerHTML = `
+        <div class="ico"><img src="${favicon(item.url)}" alt=""></div>
+        <div class="main">
+          <div class="title">${item.title || new URL(item.url).hostname}</div>
+          <div class="url">${item.url}</div>
+        </div>
+        <div class="btns">
+          <button class="btn star ${item.fav ? 'active':''}" title="Favorite">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#9aa3af" stroke-width="2">
+              <path d="M12 17.3l-6.16 3.73L7 13.4 2 9.27l6.91-1L12 2l3.09 6.27L22 9.27l-5 4.13 1.16 7.63L12 17.3z"/>
+            </svg>
+          </button>
+          <button class="btn open" title="Open">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#334155" stroke-width="2">
+              <circle cx="12" cy="12" r="9"/><path d="M2 12h20M12 2a15 15 0 010 20M12 2a15 15 0 000 20"/>
+            </svg>
+          </button>
+          <div class="btn menu" title="More">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#64748b" stroke-width="2">
+              <path d="M6 9l6 6 6-6"/>
+            </svg>
+            <div class="sheet">
+              <button class="editBtn">Edit</button>
+              <button class="copyBtn">Copy URL</button>
+              <button class="delBtn danger">Delete</button>
+            </div>
+          </div>
+        </div>
+      `;
+
+      // เปิดลิงก์ในหน้าเดิม
+      li.querySelector('.main').onclick = () => location.href = item.url;
+      li.querySelector('.open').onclick = e => { e.stopPropagation(); location.href = item.url; };
+
+      // favorite toggle
+      li.querySelector('.star').onclick = e => {
+        e.stopPropagation();
+        item.fav = !item.fav; save(); render();
+      };
+
+      // menu
+      const menu = li.querySelector('.menu');
+      menu.onclick = e => {
+        e.stopPropagation();
+        menu.classList.toggle('open');
+      };
+      document.addEventListener('click', () => menu.classList.remove('open'), { once:true });
+
+      // actions
+      li.querySelector('.delBtn').onclick = e => {
+        e.stopPropagation();
+        items = items.filter(x => x.id !== item.id);
+        save(); render();
+      };
+      li.querySelector('.copyBtn').onclick = async e => {
+        e.stopPropagation();
+        try { await navigator.clipboard.writeText(item.url); } catch {}
+        menu.classList.remove('open');
+      };
+      li.querySelector('.editBtn').onclick = e => {
+        e.stopPropagation();
+        openModal('Edit Bookmark');
+        editingId = item.id;
+        titleIn.value = item.title || '';
+        urlIn.value = item.url || '';
+      };
+
+      listEl.appendChild(li);
+    });
+  }
+
+  // modal
+  function openModal(title='Add Bookmark'){
+    modalTitle.textContent = title;
+    dim.style.display = 'flex';
+    setTimeout(() => urlIn.focus(), 50);
+  }
+  function closeModal(){
+    dim.style.display = 'none';
+    titleIn.value = ''; urlIn.value = ''; editingId = null;
+  }
+
+  // events
+  document.getElementById('cancelBtn').onclick = closeModal;
+  document.getElementById('saveBtn').onclick = () => {
+    const url = urlIn.value.trim();
+    if (!isURL(url)) { alert('URL must start with http(s)://'); return; }
+    const title = titleIn.value.trim();
+    if (editingId){
+      const idx = items.findIndex(x => x.id === editingId);
+      if (idx > -1){ items[idx].title = title; items[idx].url = url; }
+    } else {
+      items.unshift({ id: Date.now()+Math.random().toString(36).slice(2,8), title, url, fav:false, ts: Date.now() });
+    }
+    save(); render(); closeModal();
+  };
+  fab.onclick = () => openModal('Add Bookmark');
+
+  // filters
+  $$('.chip').forEach(ch => ch.onclick = () => {
+    $$('.chip').forEach(c => c.classList.remove('active'));
+    ch.classList.add('active');
+    filter = ch.dataset.filter;
+    render();
+  });
+
+  // boot
+  render();
+})();
+</script>
 </body>
 </html>
