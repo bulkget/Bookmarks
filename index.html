@@ -1,69 +1,136 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>iOS Glass Menu</title>
-
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Bookmarks (Offline)</title>
 <style>
-body {
-  margin:0;
-  padding:0;
-  background:linear-gradient(135deg,#f4b183,#fce1d0);
-  height:100vh;
-  display:flex;
-  justify-content:center;
-  align-items:center;
-  font-family:-apple-system,system-ui,Roboto;
-}
-
-/* ==== เมนูคอนเทนเนอร์ ==== */
-.menu {
-  display:flex;
-  gap:16px;
-  padding:10px 20px;
-  border-radius:40px;
-  backdrop-filter:blur(20px);
-  background:rgba(255,255,255,0.3);
-  box-shadow:0 4px 15px rgba(0,0,0,0.1);
-}
-
-/* ==== ปุ่มแต่ละอัน ==== */
-.menu button {
-  width:70px;
-  height:70px;
-  border:none;
-  border-radius:30px;
-  background:rgba(255,255,255,0.45);
-  backdrop-filter:blur(20px);
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  cursor:pointer;
-  box-shadow:0 2px 8px rgba(0,0,0,0.15);
-  transition:all .25s ease;
-}
-
-.menu button:hover {
-  transform:translateY(-3px);
-  box-shadow:0 4px 12px rgba(0,0,0,0.25);
-}
-
-/* ==== ไอคอน ==== */
-.menu img {
-  width:34px;
-  height:34px;
-  filter:invert(0);
-}
+  :root{
+    --bg:#0b0b0b; --panel:#121418; --ring:#1f2937;
+    --text:#e9eef5; --muted:#9aa4b2; --accent:#3b82f6; --danger:#ef4444;
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0; background:var(--bg); color:var(--text);
+    font:16px/1.55 system-ui, Segoe UI, Roboto, Arial;
+  }
+  .wrap{max-width:820px;margin:auto;padding:22px}
+  header{display:flex;align-items:center;gap:10px;justify-content:space-between;margin-bottom:14px}
+  h1{font-size:28px;margin:0}
+  .badge{font-size:13px;color:#d1d7e2;background:#0f1216;border:1px solid var(--ring);
+         border-radius:999px;padding:6px 10px;min-width:64px;text-align:center}
+  .card{background:var(--panel);border:1px solid var(--ring);border-radius:14px;padding:14px}
+  form{display:grid;grid-template-columns:1fr 1fr auto;gap:10px;margin-bottom:8px}
+  input,button{border-radius:10px;padding:12px;border:0;outline:none}
+  input{background:#161a20;border:1px solid var(--ring);color:var(--text)}
+  input:focus{border-color:var(--accent)}
+  button{background:var(--accent);color:#fff;font-weight:600;cursor:pointer}
+  button:disabled{opacity:.5;cursor:not-allowed}
+  .help{color:var(--muted);font-size:13px;margin:6px 2px 2px}
+  ul{list-style:none;margin:10px 0 0;padding:0;display:flex;flex-direction:column;gap:8px}
+  li{display:flex;align-items:center;gap:10px;padding:10px 12px;background:#0f1216;
+     border:1px solid var(--ring);border-radius:12px}
+  .sp{flex:1;min-width:0;cursor:pointer}
+  .title{font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .url{font-size:13px;color:#9ec1ff;word-break:break-all}
+  .del{background:#1a0f11;border:1px solid #3a0d13;color:#ffd7dd;padding:8px 10px;border-radius:8px;cursor:pointer}
+  @media(max-width:760px){form{grid-template-columns:1fr;}}
 </style>
 </head>
 <body>
+<div class="wrap">
+  <header>
+    <h1>Bookmarks</h1>
+    <div class="badge" id="count">0 items</div>
+  </header>
 
-<div class="menu">
-  <button><img src="https://cdn-icons-png.flaticon.com/512/3046/3046120.png" alt="TikTok"/></button>
-  <button><img src="https://cdn-icons-png.flaticon.com/512/3046/3046120.png" alt="TikTok"/></button>
-  <button><img src="https://cdn-icons-png.flaticon.com/512/174/174855.png" alt="Instagram"/></button>
+  <div class="card">
+    <form id="f" autocomplete="off">
+      <input id="name" placeholder="Title (optional)">
+      <input id="url"  placeholder="https://example.com">
+      <button id="add" type="submit" disabled>Add</button>
+    </form>
+    <div class="help">Saved locally (offline). Use this to test UI before connecting Firebase.</div>
+    <ul id="list"></ul>
+  </div>
 </div>
 
+<script>
+(() => {
+  // Namespace by ?device= if present (optional)
+  const params   = new URLSearchParams(location.search);
+  const deviceId = params.get('device') || 'default';
+  const KEY = `bg_bookmarks_${deviceId}`;
+
+  const qs = id => document.getElementById(id);
+  const nameI = qs('name');
+  const urlI  = qs('url');
+  const addB  = qs('add');
+  const form  = qs('f');
+  const list  = qs('list');
+  const count = qs('count');
+
+  const isURL = v => /^https?:\/\/.+/i.test((v||'').trim());
+  const esc   = s => (s||'').replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+  const host  = u => { try { return new URL(u).host } catch { return u } };
+
+  const load = () => {
+    try { return JSON.parse(localStorage.getItem(KEY) || '[]'); }
+    catch { return []; }
+  };
+  const save = items => localStorage.setItem(KEY, JSON.stringify(items));
+
+  let items = load().sort((a,b)=>b.ts-a.ts);
+  const updateCount = () => count.textContent = `${items.length} item${items.length!==1?'s':''}`;
+
+  const render = () => {
+    list.innerHTML = '';
+    items.forEach(addRow);
+    updateCount();
+  };
+
+  const addRow = (item) => {
+    const li = document.createElement('li');
+    li.dataset.id = item.id;
+    li.innerHTML = `
+      <div class="sp">
+        <div class="title">${esc(item.name) || esc(host(item.url))}</div>
+        <div class="url">${esc(item.url)}</div>
+      </div>
+      <button class="del" type="button">Delete</button>
+    `;
+    // open link when clicking the left area
+    li.querySelector('.sp').onclick = () => { location.href = item.url; };
+    // delete
+    li.querySelector('.del').onclick = () => {
+      items = items.filter(x => x.id !== item.id);
+      save(items);
+      li.remove();
+      updateCount();
+    };
+    list.prepend(li);
+  };
+
+  urlI.addEventListener('input', () => addB.disabled = !isURL(urlI.value));
+
+  form.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const url = (urlI.value || '').trim();
+    if (!isURL(url)) return alert('URL must start with http(s)://');
+    const item = {
+      id: 'id_' + Date.now() + '_' + Math.random().toString(36).slice(2,8),
+      name: (nameI.value || '').trim(),
+      url, ts: Date.now()
+    };
+    items.unshift(item);
+    save(items);
+    addRow(item);
+    updateCount();
+    nameI.value = ''; urlI.value = ''; addB.disabled = true;
+  });
+
+  render();
+})();
+</script>
 </body>
 </html>
