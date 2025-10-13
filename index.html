@@ -1,0 +1,97 @@
+<!doctype html><html lang="en"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Bookmarks - BulkGet Viewer</title>
+<style>
+  body{margin:0;padding:16px;font:16px/1.6 system-ui,Segoe UI,Roboto,Arial;background:#0b0b0b;color:#eee}
+  .wrap{max-width:760px;margin:auto}
+  input,button{font:16px;padding:10px;border-radius:10px;border:0;outline:0}
+  input{width:100%;background:#1a1a1a;color:#fff;margin:6px 0}
+  button{background:#3b82f6;color:#fff;margin:6px 0}
+  ul{list-style:none;padding:0;margin:0}
+  li{background:#131313;border-radius:12px;padding:10px 12px;margin:8px 0;display:flex;gap:10px;align-items:center}
+  .title{flex:1}
+  .url{color:#9ec1ff;font-size:13px}
+  .del{background:#ef4444}
+</style>
+</head><body><div class="wrap">
+  <h2>Bookmarks</h2>
+  <form id="f">
+    <input id="name" placeholder="Title (optional)">
+    <input id="url"  placeholder="https://">
+    <button type="submit">Add</button>
+  </form>
+  <ul id="list"></ul>
+</div>
+
+<!-- Firebase v10 (modular) -->
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
+  import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js";
+  import { getDatabase, ref, onChildAdded, onChildRemoved, set, remove, push, serverTimestamp }
+    from "https://www.gstatic.com/firebasejs/10.12.5/firebase-database.js";
+
+  // TODO: ใส่ config โปรเจกต์ของคุณ (คีย์ฝั่ง client เปิดเผยได้ แต่ป้องกันด้วย Rules)
+  const firebaseConfig = {
+    apiKey: "...",
+    authDomain: "...",
+    databaseURL: "https://<YOUR-PROJECT>.firebaseio.com",
+    projectId: "...",
+    appId: "..."
+  };
+
+  const app  = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+  const db   = getDatabase(app);
+
+  // รับ deviceId จากพารามิเตอร์
+  const params   = new URLSearchParams(location.search);
+  const deviceId = params.get("device") || "guest";
+
+  // ล็อกอิน anonymous แล้วผูก uid = deviceId (ใช้ custom token จะดีที่สุด ถ้าไม่มี ให้ใช้ device เป็น key path)
+  signInAnonymously(auth);
+  onAuthStateChanged(auth, async (user) => {
+    // ถ้าอยากให้ uid == deviceId จริง ๆ ต้องใช้ custom auth; ถ้าไม่สะดวก ให้ยึด path ที่มี deviceId เป็นตัวป้องกันหลัก
+  });
+
+  const listEl = document.getElementById('list');
+  const form   = document.getElementById('f');
+  const nameEl = document.getElementById('name');
+  const urlEl  = document.getElementById('url');
+
+  const base = ref(db, `bookmarks/${deviceId}`);
+
+  // render item
+  const dom = {};
+  function addRow(item){
+    const li = document.createElement('li');
+    li.id = item.id;
+    li.innerHTML = `
+      <div class="title">
+        <div>${(item.name||new URL(item.url).host).replace(/[<>]/g,'')}</div>
+        <a class="url" href="${item.url}" target="_blank" rel="noopener">${item.url}</a>
+      </div>
+      <button class="del">Delete</button>`;
+    li.querySelector('.del').onclick = ()=> remove(ref(db, `bookmarks/${deviceId}/${item.id}`));
+    li.onclick = (e)=>{ if(e.target.tagName!=="BUTTON"){ location.href=item.url; } };
+    listEl.prepend(li); dom[item.id]=li;
+  }
+  function removeRow(id){ const el = dom[id]; if(el){ el.remove(); delete dom[id]; } }
+
+  // realtime listeners
+  onChildAdded(base, (snap)=> addRow(snap.val()));
+  onChildRemoved(base, (snap)=> removeRow(snap.key));
+
+  // add
+  form.onsubmit = async (e)=>{
+    e.preventDefault();
+    const url = (urlEl.value||"").trim();
+    if(!/^https?:\/\//i.test(url)){ alert("URL ต้องขึ้นต้นด้วย http(s)://"); return; }
+    const name = (nameEl.value||"").trim();
+    const id   = push(ref(db)).key; // สร้าง id
+    const item = { id, name, url, ts: Date.now() };
+    await set(ref(db, `bookmarks/${deviceId}/${id}`), item);
+    nameEl.value = ""; urlEl.value = "";
+  };
+</script>
+</body></html>
