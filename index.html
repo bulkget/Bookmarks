@@ -1,158 +1,167 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Bookmarks</title>
-<style>
-  :root{
-    /* Dark theme */
-    --bg:#0b0f14;
-    --card:#11161d;
-    --text:#e5e7eb;
-    --muted:#96a0ad;
-    --ring:#1e2631;
-    --accent:#0a84ff;
-    --star:#ffd166;
-    --danger:#ef4444;
-    --btn:#151c25;
-    --btnHover:#0f3c73;
-  }
-  *{
-    box-sizing:border-box;
-    font-family:-apple-system,system-ui,Segoe UI,Roboto,sans-serif;
-    font-size:15.5px; /* ✅ จำกัดไม่เกิน 16 */
-  }
-  body{margin:0;background:var(--bg);color:var(--text);font-size:15.5px}
-  .wrap{max-width:860px;margin:auto;padding:16px 14px 90px}
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Privacy Policy - BulkGet Viewer (Mini Browser)</title>
+  <style>
+    :root {
+      --bg: #0b0f14;
+      --card: #11161d;
+      --text: #e5e7eb;
+      --muted: #9ca3af;
+      --link: #60a5fa;
+      --ring: #1e2631;
+    }
+    * {
+      box-sizing: border-box;
+      font-family: -apple-system, system-ui, Segoe UI, Roboto, sans-serif;
+    }
+    body {
+      margin: 0;
+      padding: 20px;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.7;
+      font-size: 15.5px; /* ไม่เกิน 16 */
+    }
 
-  /* top bar */
-  .brand{font-size:16px;font-weight:700;letter-spacing:.4px;margin:6px 2px 14px}
+    h1, h2 {
+      color: #fff;
+      font-weight: 600;
+    }
 
-  /* filter chips */
-  .chips{display:flex;gap:10px;flex-wrap:wrap;margin:8px 2px 14px}
-  .chip{
-    padding:10px 16px;border-radius:12px;border:1px solid var(--ring);
-    background:var(--btn);color:var(--text);cursor:pointer;font-weight:600;
-    font-size:15px;
-  }
-  .chip.active{
-    background:#fff;
-    border-color:#fff;
-    color:#000;
-  }
+    h1 {
+      text-align: center;
+      margin: 0 0 10px;
+      font-size: 20px;
+    }
 
-  /* list */
-  .list{display:flex;flex-direction:column;gap:14px}
-  .item{
-    background:var(--card);border:1px solid var(--ring);border-radius:18px;
-    padding:14px 14px;display:flex;align-items:center;gap:12px;
-    box-shadow:0 10px 26px rgba(0,0,0,.25);
-    font-size:15px;
-  }
-  .ico{
-    width:34px;height:34px;flex:0 0 34px;border-radius:9px;display:grid;place-items:center;
-    background:#0e141b;border:1px solid var(--ring);overflow:hidden
-  }
-  .ico img{width:20px;height:20px;filter:grayscale(.1)}
-  .main{flex:1;min-width:0;cursor:pointer}
-  .title{font-weight:700;margin-bottom:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:15.5px}
-  .url{font-size:14px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    h2 {
+      font-size: 16px;
+      margin-top: 28px;
+      margin-bottom: 10px;
+      color: #f1f1f1;
+    }
 
-  .btns{display:flex;gap:6px}
-  .btn{
-    width:38px;height:38px;border-radius:12px;border:1px solid var(--ring);
-    background:var(--btn);display:grid;place-items:center;cursor:pointer;
-    transition:background .15s ease,border-color .15s ease
-  }
-  .btn:hover{background:#121a23;border-color:#2a3644}
-  .btn svg{width:18px;height:18px;stroke:#c6d0dc}
-  .star.active svg{fill:var(--star);stroke:var(--star)}
-  .open{color:#c6d0dc}
-  .menu{position:relative}
-  .menu .sheet{
-    position:absolute;right:0;top:46px;background:#0f141b;border:1px solid var(--ring);
-    border-radius:12px;box-shadow:0 16px 32px rgba(0,0,0,.35);overflow:hidden;display:none
-  }
-  .menu.open .sheet{display:block}
-  .sheet button{
-    display:block;min-width:180px;padding:10px 14px;background:transparent;border:0;
-    border-bottom:1px solid var(--ring);text-align:left;cursor:pointer;
-    font-size:15px;color:var(--text)
-  }
-  .sheet button:hover{background:#121a23}
-  .sheet button:last-child{border-bottom:0}
-  .sheet .danger{color:var(--danger)}
+    .date {
+      text-align: center;
+      font-size: 13.5px;
+      color: var(--muted);
+      margin-bottom: 28px;
+    }
 
-  /* FAB (add button) */
-  .fab{
-    position:fixed;right:18px;bottom:20px;width:62px;height:62px;border-radius:20px;
-    background:#fff;border:1px solid #333;display:grid;place-items:center;
-    box-shadow:0 14px 30px rgba(255,255,255,.15);cursor:pointer
-  }
-  .fab svg{width:26px;height:26px;color:#000}
+    a {
+      color: var(--link);
+      text-decoration: none;
+    }
 
-  /* modal (Add link) */
-  .dim{
-    position:fixed;inset:0;background:rgba(0,0,0,.45);display:none;align-items:center;justify-content:center;
-    padding:0 14px;
-  }
-  .modal{
-    background:#0f141b;border-radius:12px;
-    padding:16px;border:1px solid var(--ring);width:100%;max-width:560px;
-    box-shadow:0 18px 40px rgba(0,0,0,.45)
-  }
-  .row{display:flex;flex-direction:column;gap:8px;margin:8px 0}
-  input{
-    width:100%;padding:12px 14px;border-radius:10px;border:1px solid var(--ring);
-    background:#0c1117;color:var(--text);font-size:15.5px
-  }
+    a:hover {
+      text-decoration: underline;
+    }
 
-  /* ปุ่ม Save / Cancel */
-  .actions{display:flex;gap:10px;margin-top:8px}
-  .primary, .ghost{
-    background:#fff;color:#000;border:1px solid #333;
-    padding:12px 16px;border-radius:10px;cursor:pointer;font-weight:600;font-size:15.5px
-  }
-  .primary:hover, .ghost:hover{background:#e6e6e6}
+    ul {
+      margin-left: 22px;
+      padding-left: 0;
+    }
 
-  .empty{color:var(--muted);text-align:center;margin-top:40px;font-size:15px}
+    li {
+      margin-bottom: 8px;
+    }
 
-  /* ปิด tap highlight */
-  * { -webkit-tap-highlight-color: transparent; }
+    .card {
+      background: var(--card);
+      border: 1px solid var(--ring);
+      border-radius: 12px;
+      padding: 24px;
+      max-width: 900px;
+      margin: 0 auto 50px;
+      box-shadow: 0 8px 26px rgba(0,0,0,0.4);
+    }
 
-  /* ไม่ให้ select ข้อความ */
-  .item, .main, .title, .url, .btn, .chip {
-    user-select: none;
-    -webkit-user-select: none;
-    -ms-user-select: none;
-  }
-
-  /* เอฟเฟกต์ตอนกด */
-  .item:active { 
-    transform: translateY(1px);
-    background:#0f141b;
-    transition: background .08s ease, transform .08s ease;
-  }
-
-  /* focus effect */
-  .btn:focus-visible, .chip:focus-visible, .fab:focus-visible {
-    outline: none;
-    box-shadow: 0 0 0 3px rgba(255,255,255,.2);
-  }
-
-  ::selection { background: transparent; }    
-
-  /* input focus */
-  input:focus {
-    outline: none !important;
-    border-color: #2a3644;
-    box-shadow: none !important;
-    background: #0c1117;
-  }
-</style>
+    p {
+      margin: 0 0 12px;
+      color: var(--text);
+    }
+  </style>
 </head>
 <body>
-<!-- (script section remains unchanged) -->
+  <div class="card">
+    <h1>Privacy Policy for BulkGet Viewer</h1>
+    <div class="date">
+      Effective Date: September 20, 2025 <br>
+      Privacy Policy URL: 
+      <a href="https://bulkget.github.io/Privacy-Policy/" target="_blank">
+        https://bulkget.github.io/Privacy-Policy/
+      </a>
+    </div>
+
+    <h2>1. Introduction</h2>
+    <p>
+      BulkGet Viewer (“Application”, “we”, “our”, or “us”) is a lightweight WebView mini browser developed by BULKGET DEV.TS.  
+      We respect your privacy and are committed to protecting user information in accordance with Google Play Developer Policies.
+    </p>
+
+    <h2>2. Information Collection and Use</h2>
+    <p>
+      - The Application does not directly collect, store, or share any personally identifiable information.<br>
+      - We may use trusted third-party services (for example, Google AdMob) that collect information for analytics and advertising purposes.<br>
+      - Collected information may include non-personal data such as device model, system version, app interactions, and general usage statistics.
+    </p>
+
+    <h2>3. Log Data</h2>
+    <p>
+      The Application does not collect log data directly. However, certain third-party services (such as Google Play Services) may automatically collect anonymous diagnostic or performance data to improve service reliability.
+    </p>
+
+    <h2>4. Cookies</h2>
+    <p>
+      The Application itself does not use cookies. Some integrated third-party services (e.g., Google AdMob) may use cookies or similar tracking technologies to deliver better ad experiences.
+    </p>
+
+    <h2>5. Third-party Services</h2>
+    <p>
+      The Application integrates the following third-party services, which may collect limited information in accordance with their own privacy policies:
+    </p>
+    <ul>
+      <li><a href="https://policies.google.com/privacy" target="_blank">Google Play Services</a></li>
+      <li><a href="https://support.google.com/admob/answer/6128543" target="_blank">Google AdMob</a></li>
+    </ul>
+
+    <h2>6. Data Sharing and Disclosure</h2>
+    <p>
+      We do not sell, trade, or otherwise share any user data with third parties, except as required by applicable law or as necessary to maintain third-party service functionality.
+    </p>
+
+    <h2>7. User Choices and Controls</h2>
+    <p>
+      - You may manage app permissions in your device settings.<br>
+      - You may opt out of personalized advertising through your Google account’s ad settings.
+    </p>
+
+    <h2>8. Security</h2>
+    <p>
+      We take reasonable precautions to protect user data. However, please note that no system is completely secure, and we cannot guarantee absolute protection.
+    </p>
+
+    <h2>9. Children’s Privacy</h2>
+    <p>
+      This Application is designed for general audiences and not directed toward children under 13 years old.  
+      We do not knowingly collect personal information from children. If you believe that your child has provided personal data, please contact us immediately.
+    </p>
+
+    <h2>10. Changes to This Privacy Policy</h2>
+    <p>
+      This Privacy Policy may be updated from time to time. Users are encouraged to review this page periodically.  
+      Updates are effective once published at: 
+      <a href="https://bulkget.github.io/Privacy-Policy/" target="_blank">https://bulkget.github.io/Privacy-Policy/</a>
+    </p>
+
+    <h2>11. Contact Us</h2>
+    <p>
+      If you have questions about this Privacy Policy or our practices, please contact us at:<br>
+      <strong>Email:</strong> <a href="mailto:Bulkget.app@gmail.com">Bulkget.app@gmail.com</a>
+    </p>
+  </div>
 </body>
 </html>
