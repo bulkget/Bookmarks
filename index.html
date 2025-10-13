@@ -110,6 +110,34 @@
   .primary:hover, .ghost:hover{background:#e6e6e6}
 
   .empty{color:var(--muted);text-align:center;margin-top:40px}
+
+
+      
+/* 1) ปิด tap highlight ของ Android/Chrome */
+* { -webkit-tap-highlight-color: transparent; }
+
+/* 2) ไม่ให้เลือกข้อความเวลาปัด/แตะการ์ด */
+.item, .main, .title, .url, .btn, .chip {
+  user-select: none;
+  -webkit-user-select: none;
+  -ms-user-select: none;
+}
+
+/* 3) เอฟเฟกต์กดการ์ดแบบนุ่ม ๆ แทนสีฟ้า */
+.item:active { 
+  transform: translateY(1px);
+  background:#0f141b;           /* เข้มขึ้นนิดหน่อย */
+  transition: background .08s ease, transform .08s ease;
+}
+
+/* 4) ถ้าปุ่ม/ลิงก์มีโฟกัสจากคีย์บอร์ด ให้ใช้เงาแทนกรอบฟ้า */
+.btn:focus-visible, .chip:focus-visible, .fab:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(255,255,255,.2);
+}
+
+/* 5) กันเบราว์เซอร์ทำ selection สีน้ำเงินบนบางเครื่อง */
+::selection { background: transparent; }    
 </style></head>
 <body>
 <div class="wrap">
