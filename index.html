@@ -2,153 +2,283 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Bookmarks</title>
 <style>
-:root{
-  --glass-bg:rgba(255,255,255,0.15);
-  --glass-border:rgba(255,255,255,0.25);
-  --accent:#007aff;
-  --danger:#ff3b30;
-  --text:#ffffff;
-  --muted:#c4c7cc;
-  --blur:20px;
-}
-*{box-sizing:border-box;font-family:-apple-system,system-ui,Roboto,sans-serif;}
-body{
-  margin:0;
-  padding:32px 16px;
-  background:linear-gradient(145deg,#0a0a0a,#1b1b1b);
-  color:var(--text);
-  min-height:100vh;
-  display:flex;
-  justify-content:center;
-}
-.wrap{
-  width:100%;
-  max-width:720px;
-  display:flex;
-  flex-direction:column;
-  gap:18px;
-}
+  :root{
+    --bg:#f5f6fb;
+    --card:#ffffff;
+    --text:#111827;
+    --muted:#6b7280;
+    --ring:#e6e9f2;
+    --accent:#0a84ff;
+    --star:#f4b400;
+    --danger:#ef4444;
+  }
+  *{box-sizing:border-box;font-family:-apple-system,system-ui,Segoe UI,Roboto,sans-serif}
+  body{margin:0;background:var(--bg);color:var(--text)}
+  .wrap{max-width:860px;margin:auto;padding:16px 14px 90px}
 
-/* ==== Glass Card ==== */
-.card{
-  background:var(--glass-bg);
-  border:1px solid var(--glass-border);
-  border-radius:24px;
-  backdrop-filter:blur(var(--blur));
-  box-shadow:0 8px 30px rgba(0,0,0,0.25);
-  padding:22px;
-}
+  /* top bar */
+  .brand{font-size:22px;font-weight:700;letter-spacing:.4px;margin:6px 2px 14px}
 
-/* ==== Header ==== */
-h1{margin:0;font-size:28px;font-weight:700;text-align:left;}
-.badge{
-  align-self:flex-end;
-  background:var(--glass-bg);
-  border:1px solid var(--glass-border);
-  border-radius:999px;
-  padding:6px 14px;
-  font-size:14px;
-  color:var(--muted);
-}
+  /* filter chips */
+  .chips{display:flex;gap:10px;flex-wrap:wrap;margin:8px 2px 14px}
+  .chip{
+    padding:10px 16px;border-radius:12px;border:1px solid var(--ring);background:#fff;
+    color:var(--text);cursor:pointer;font-weight:600
+  }
+  .chip.active{background:#eef5ff;border-color:#cfe2ff;color:#0a4cff}
 
-/* ==== Inputs ==== */
-form{display:flex;flex-direction:column;gap:10px;margin-top:10px;}
-input{
-  background:var(--glass-bg);
-  border:1px solid var(--glass-border);
-  color:var(--text);
-  border-radius:16px;
-  padding:12px 16px;
-  font-size:16px;
-  backdrop-filter:blur(var(--blur));
-  outline:none;
-}
-input:focus{border-color:var(--accent);}
-button{
-  border:none;
-  border-radius:16px;
-  padding:12px;
-  background:linear-gradient(145deg,#007aff,#0a84ff);
-  color:#fff;
-  font-size:16px;
-  font-weight:600;
-  cursor:pointer;
-  transition:transform .2s,box-shadow .2s;
-}
-button:hover{transform:translateY(-1px);box-shadow:0 4px 12px rgba(0,122,255,0.4);}
-button:disabled{opacity:0.5;cursor:not-allowed;}
+  /* list */
+  .list{display:flex;flex-direction:column;gap:14px}
+  .item{
+    background:var(--card); border:1px solid var(--ring); border-radius:18px;
+    padding:14px 14px; display:flex; align-items:center; gap:12px;
+    box-shadow:0 8px 20px rgba(0,0,0,.06);
+  }
+  .ico{
+    width:34px;height:34px;flex:0 0 34px;border-radius:9px;display:grid;place-items:center;
+    background:#f2f4f8;border:1px solid var(--ring);overflow:hidden
+  }
+  .ico img{width:20px;height:20px}
+  .main{flex:1;min-width:0;cursor:pointer}
+  .title{font-weight:700;margin-bottom:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .url{font-size:14px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 
-ul{list-style:none;margin:16px 0 0;padding:0;display:flex;flex-direction:column;gap:12px;}
-li{
-  display:flex;align-items:center;justify-content:space-between;
-  background:var(--glass-bg);
-  border:1px solid var(--glass-border);
-  border-radius:18px;
-  padding:14px 16px;
-  backdrop-filter:blur(var(--blur));
-  transition:background .3s;
-}
-li:hover{background:rgba(255,255,255,0.2);}
-.sp{flex:1;cursor:pointer;min-width:0;}
-.title{font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
-.url{font-size:13px;color:var(--muted);word-break:break-all;}
-.del{
-  background:rgba(255,59,48,0.2);
-  border:1px solid rgba(255,59,48,0.4);
-  color:#ff7b73;
-  border-radius:12px;
-  padding:8px 12px;
-  cursor:pointer;
-  font-size:14px;
-  transition:background .2s;
-}
-.del:hover{background:rgba(255,59,48,0.4);}
+  .btns{display:flex;gap:6px}
+  .btn{
+    width:38px;height:38px;border-radius:12px;border:1px solid var(--ring);background:#fff;
+    display:grid;place-items:center;cursor:pointer
+  }
+  .btn svg{width:18px;height:18px}
+  .star.active svg{fill:var(--star);stroke:var(--star)}
+  .open{color:#334155}
+  .menu{position:relative}
+  .menu .sheet{
+    position:absolute;right:0;top:46px;background:#fff;border:1px solid var(--ring);
+    border-radius:12px;box-shadow:0 12px 24px rgba(0,0,0,.1);overflow:hidden;display:none
+  }
+  .menu.open .sheet{display:block}
+  .sheet button{
+    display:block;min-width:160px;padding:10px 14px;background:#fff;border:0;border-bottom:1px solid var(--ring);
+    text-align:left;cursor:pointer;font-size:14px
+  }
+  .sheet button:last-child{border-bottom:0}
+  .sheet .danger{color:var(--danger)}
+
+  /* FAB */
+  .fab{
+    position:fixed;right:18px;bottom:20px;width:62px;height:62px;border-radius:20px;
+    background:#eef5ff;border:1px solid #cfe2ff;display:grid;place-items:center;
+    box-shadow:0 10px 24px rgba(10,132,255,.25);cursor:pointer
+  }
+  .fab svg{width:26px;height:26px;color:#0a84ff}
+
+  /* modal */
+  .dim{position:fixed;inset:0;background:rgba(0,0,0,.28);display:none;align-items:end}
+  .modal{
+    background:#fff;border-radius:18px 18px 0 0;padding:16px;border:1px solid var(--ring);
+    width:100%;max-width:860px;margin:auto
+  }
+  .row{display:flex;flex-direction:column;gap:8px;margin:8px 0}
+  input{
+    width:100%;padding:12px 14px;border-radius:12px;border:1px solid var(--ring);
+    background:#fff;font-size:16px
+  }
+  .actions{display:flex;gap:10px;margin-top:8px}
+  .primary{background:var(--accent);border:0;color:#fff;padding:12px 16px;border-radius:12px;font-weight:700;cursor:pointer}
+  .ghost{background:#fff;border:1px solid var(--ring);padding:12px 16px;border-radius:12px;cursor:pointer}
+  .empty{color:var(--muted);text-align:center;margin-top:40px}
 </style>
 </head>
 <body>
 <div class="wrap">
-  <h1>Bookmarks</h1>
-  <div class="badge" id="count">0 items</div>
+  <div class="brand">Bookmarks</div>
 
-  <div class="card">
-    <form id="f" autocomplete="off">
-      <input id="name" placeholder="Title (optional)">
-      <input id="url" placeholder="https://example.com">
-      <button id="add" type="submit" disabled>Add</button>
-    </form>
-    <ul id="list"></ul>
+  <div class="chips">
+    <div class="chip active" data-filter="all">All</div>
+    <div class="chip" data-filter="fav">Favorites</div>
+  </div>
+
+  <div id="list" class="list"></div>
+  <div id="empty" class="empty" style="display:none">No items yet</div>
+</div>
+
+<!-- FAB -->
+<button id="fab" class="fab" aria-label="Add">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+    <path d="M12 5v14M5 12h14"/>
+  </svg>
+</button>
+
+<!-- Modal Add/Edit -->
+<div id="dim" class="dim">
+  <div class="modal">
+    <h3 id="modalTitle" style="margin:4px 0 6px">Add Bookmark</h3>
+    <div class="row">
+      <input id="titleIn" placeholder="Title (optional)">
+      <input id="urlIn" placeholder="https://example.com">
+    </div>
+    <div class="actions">
+      <button id="saveBtn" class="primary">Save</button>
+      <button id="cancelBtn" class="ghost">Cancel</button>
+    </div>
   </div>
 </div>
 
 <script>
 (() => {
-  const qs = id => document.getElementById(id);
-  const nameI=qs('name'),urlI=qs('url'),addB=qs('add'),form=qs('f'),list=qs('list'),count=qs('count');
-  const KEY='bookmarks_demo';
-  const isURL=v=>/^https?:\/\/.+/i.test(v||''),esc=s=>(s||'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
-  const host=u=>{try{return new URL(u).host}catch{return u}};
-  let items=JSON.parse(localStorage.getItem(KEY)||'[]');
-  const save=()=>localStorage.setItem(KEY,JSON.stringify(items));
-  const updateCount=()=>count.textContent=`${items.length} item${items.length!==1?'s':''}`;
-  const render=()=>{list.innerHTML='';items.forEach(addRow);updateCount();};
-  const addRow=item=>{
-    const li=document.createElement('li');
-    li.innerHTML=`<div class="sp"><div class="title">${esc(item.name)||esc(host(item.url))}</div><div class="url">${esc(item.url)}</div></div><button class="del">Delete</button>`;
-    li.querySelector('.sp').onclick=()=>location.href=item.url;
-    li.querySelector('.del').onclick=()=>{items=items.filter(x=>x.id!==item.id);save();li.remove();updateCount();};
-    list.prepend(li);
+  const $ = sel => document.querySelector(sel);
+  const $$ = sel => document.querySelectorAll(sel);
+
+  // storage
+  const KEY = 'bg_ios_cards';
+  let items = JSON.parse(localStorage.getItem(KEY) || '[]');
+
+  let filter = 'all';
+  let editingId = null;
+
+  // el
+  const listEl = $('#list');
+  const emptyEl = $('#empty');
+  const fab = $('#fab');
+  const dim = $('#dim');
+  const titleIn = $('#titleIn');
+  const urlIn = $('#urlIn');
+  const saveBtn = $('#saveBtn');
+  const cancelBtn = $('#cancelBtn');
+  const modalTitle = $('#modalTitle');
+
+  // utils
+  const save = () => localStorage.setItem(KEY, JSON.stringify(items));
+  const favicon = url => {
+    try { return 'https://www.google.com/s2/favicons?domain=' + new URL(url).hostname + '&sz=64'; }
+    catch { return 'https://www.google.com/s2/favicons?domain=example.com&sz=64' }
   };
-  urlI.oninput=()=>addB.disabled=!isURL(urlI.value);
-  form.onsubmit=e=>{
-    e.preventDefault();
-    const url=(urlI.value||'').trim();
-    if(!isURL(url))return alert('URL must start with http(s)://');
-    const item={id:Date.now()+Math.random().toString(36).slice(2,8),name:(nameI.value||'').trim(),url,ts:Date.now()};
-    items.unshift(item);save();addRow(item);updateCount();nameI.value=urlI.value='';addB.disabled=true;
+  const isURL = v => /^https?:\/\/.+/i.test(v || '');
+
+  // render
+  function render() {
+    listEl.innerHTML = '';
+    const data = items.filter(x => filter==='fav' ? x.fav : true);
+    if (data.length === 0) emptyEl.style.display = 'block';
+    else emptyEl.style.display = 'none';
+
+    data.forEach(item => {
+      const li = document.createElement('div');
+      li.className = 'item';
+      li.innerHTML = `
+        <div class="ico"><img src="${favicon(item.url)}" alt=""></div>
+        <div class="main">
+          <div class="title">${item.title || new URL(item.url).hostname}</div>
+          <div class="url">${item.url}</div>
+        </div>
+        <div class="btns">
+          <button class="btn star ${item.fav ? 'active':''}" title="Favorite">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#9aa3af" stroke-width="2">
+              <path d="M12 17.3l-6.16 3.73L7 13.4 2 9.27l6.91-1L12 2l3.09 6.27L22 9.27l-5 4.13 1.16 7.63L12 17.3z"/>
+            </svg>
+          </button>
+          <button class="btn open" title="Open">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#334155" stroke-width="2">
+              <circle cx="12" cy="12" r="9"/><path d="M2 12h20M12 2a15 15 0 010 20M12 2a15 15 0 000 20"/>
+            </svg>
+          </button>
+          <div class="btn menu" title="More">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#64748b" stroke-width="2">
+              <path d="M6 9l6 6 6-6"/>
+            </svg>
+            <div class="sheet">
+              <button class="editBtn">Edit</button>
+              <button class="copyBtn">Copy URL</button>
+              <button class="delBtn danger">Delete</button>
+            </div>
+          </div>
+        </div>
+      `;
+
+      // open main area
+      li.querySelector('.main').onclick = () => window.open(item.url, '_blank');
+
+      // star
+      li.querySelector('.star').onclick = (e) => {
+        e.stopPropagation();
+        item.fav = !item.fav; save(); render();
+      };
+
+      // open icon
+      li.querySelector('.open').onclick = (e) => {
+        e.stopPropagation(); window.open(item.url, '_blank');
+      };
+
+      // menu
+      const menu = li.querySelector('.menu');
+      menu.onclick = (e) => {
+        e.stopPropagation();
+        menu.classList.toggle('open');
+      };
+      document.addEventListener('click', () => menu.classList.remove('open'), { once:true });
+
+      // actions
+      li.querySelector('.delBtn').onclick = (e) => {
+        e.stopPropagation();
+        items = items.filter(x => x.id !== item.id);
+        save(); render();
+      };
+      li.querySelector('.copyBtn').onclick = async (e) => {
+        e.stopPropagation();
+        try { await navigator.clipboard.writeText(item.url); } catch {}
+        menu.classList.remove('open');
+      };
+      li.querySelector('.editBtn').onclick = (e) => {
+        e.stopPropagation();
+        openModal('Edit Bookmark');
+        editingId = item.id;
+        titleIn.value = item.title || '';
+        urlIn.value = item.url || '';
+      };
+
+      listEl.appendChild(li);
+    });
+  }
+
+  // modal
+  function openModal(title='Add Bookmark'){
+    modalTitle.textContent = title;
+    dim.style.display = 'flex';
+    setTimeout(() => urlIn.focus(), 50);
+  }
+  function closeModal(){
+    dim.style.display = 'none';
+    titleIn.value = ''; urlIn.value = ''; editingId = null;
+  }
+
+  // events
+  $('#cancelBtn').onclick = closeModal;
+  $('#saveBtn').onclick = () => {
+    const url = urlIn.value.trim();
+    if (!isURL(url)) { alert('URL must start with http(s)://'); return; }
+    const title = titleIn.value.trim();
+    if (editingId){
+      const idx = items.findIndex(x => x.id === editingId);
+      if (idx > -1){ items[idx].title = title; items[idx].url = url; }
+    } else {
+      items.unshift({ id: Date.now()+Math.random().toString(36).slice(2,8), title, url, fav:false, ts: Date.now() });
+    }
+    save(); render(); closeModal();
   };
+  fab.onclick = () => openModal('Add Bookmark');
+
+  // filters
+  $$('.chip').forEach(ch => ch.onclick = () => {
+    $$('.chip').forEach(c => c.classList.remove('active'));
+    ch.classList.add('active');
+    filter = ch.dataset.filter;
+    render();
+  });
+
+  // boot
   render();
 })();
 </script>
