@@ -23,15 +23,13 @@
   </form>
   <ul id="list"></ul>
 </div>
-
-<!-- Firebase v10 (modular) -->
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
-  import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js";
+  import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js";
   import { getDatabase, ref, onChildAdded, onChildRemoved, set, remove, push }
     from "https://www.gstatic.com/firebasejs/10.12.5/firebase-database.js";
 
-  // ⬇️ วางค่าจริงของคุณตรงนี้
+  // ⬇️ ใส่ config จริงของโปรเจกต์คุณ (เอาจาก Project settings > General > Web app)
   const firebaseConfig = {
     apiKey: "YOUR_API_KEY",
     authDomain: "YOUR_PROJECT.firebaseapp.com",
@@ -44,12 +42,8 @@
   const auth = getAuth(app);
   const db   = getDatabase(app);
 
-  // รับ deviceId จาก ?device= ใน URL
   const params   = new URLSearchParams(location.search);
   const deviceId = params.get("device") || "guest";
-
-  // ล็อกอินแบบ anonymous (ต้อง Enable ใน Console แล้ว)
-  await signInAnonymously(auth);
 
   const listEl = document.getElementById('list');
   const form   = document.getElementById('f');
@@ -57,15 +51,14 @@
   const urlEl  = document.getElementById('url');
 
   const base = ref(db, `bookmarks/${deviceId}`);
-
-  // render
   const dom = {};
+
   function addRow(item){
     const li = document.createElement('li');
     li.id = item.id;
     li.innerHTML = `
       <div class="title">
-        <div>${(item.name||new URL(item.url).host).replace(/[<>]/g,'')}</div>
+        <div>${(item.name || new URL(item.url).host).replace(/[<>]/g,'')}</div>
         <a class="url" href="${item.url}" target="_blank" rel="noopener">${item.url}</a>
       </div>
       <button class="del">Delete</button>`;
@@ -75,19 +68,26 @@
   }
   function removeRow(id){ const el = dom[id]; if(el){ el.remove(); delete dom[id]; } }
 
-  // realtime
-  onChildAdded(base, (snap)=> addRow(snap.val()));
-  onChildRemoved(base, (snap)=> removeRow(snap.key));
+  // ล็อกอินแบบ Anonymous แล้วค่อย subscribe ข้อมูล + bind form
+  signInAnonymously(auth).catch(console.error);
 
-  // add
-  form.onsubmit = async (e)=>{
-    e.preventDefault();
-    const url = (urlEl.value||"").trim();
-    if(!/^https?:\/\//i.test(url)){ alert("URL ต้องขึ้นต้นด้วย http(s)://"); return; }
-    const id   = push(ref(db)).key;
-    const item = { id, name: (nameEl.value||"").trim(), url, ts: Date.now() };
-    await set(ref(db, `bookmarks/${deviceId}/${id}`), item);
-    nameEl.value=""; urlEl.value="";
-  };
+  onAuthStateChanged(auth, (user)=>{
+    if(!user) return;
+
+    // realtime listeners
+    onChildAdded(base, (snap)=> addRow(snap.val()));
+    onChildRemoved(base, (snap)=> removeRow(snap.key));
+
+    // add
+    form.onsubmit = async (e)=>{
+      e.preventDefault();
+      const url = (urlEl.value||"").trim();
+      if(!/^https?:\/\//i.test(url)){ alert("URL ต้องขึ้นต้นด้วย http(s)://"); return; }
+      const name = (nameEl.value||"").trim();
+      const newRef = push(base);
+      const item = { id: newRef.key, name, url, ts: Date.now() };
+      await set(newRef, item);
+      nameEl.value=""; urlEl.value="";
+    };
+  });
 </script>
-</body></html>
