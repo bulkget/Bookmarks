@@ -6,148 +6,147 @@
 <title>Bookmarks</title>
 <style>
   :root{
-    /* Dark theme */
-    --bg:#0b0f14;
-    --card:#11161d;
-    --text:#e5e7eb;
-    --muted:#96a0ad;
-    --ring:#1e2631;
-    --accent:#0a84ff;
-    --star:#ffd166;
-    --danger:#ef4444;
-    --btn:#151c25;
-    --btnHover:#0f3c73;
+    /* Dark-only, 3 สี: ขาว / ดำ / โปร่งใส (ใช้อัลฟ่าได้) */
+    --bg:#000;                 /* พื้นหลัง */
+    --text:#fff;               /* ตัวอักษรหลัก */
+    --muted:rgba(255,255,255,.65); /* ตัวอักษรรอง (ยังเป็น "ขาว" แต่ลดทอนด้วยอัลฟ่า) */
+    --ring:rgba(255,255,255,.14);  /* เส้นขอบ/เส้นแบ่ง (ขาวโปร่ง) */
   }
+
   *{
     box-sizing:border-box;
     font-family:-apple-system,system-ui,Segoe UI,Roboto,sans-serif;
-    font-size:15.5px; /* จำกัดไม่เกิน 16 */
+    font-size:15.5px;
     line-height:1.6;
+    -webkit-tap-highlight-color: transparent;
   }
-  body{margin:0;background:var(--bg);color:var(--text)}
-  .wrap{max-width:860px;margin:auto;padding:16px 14px 90px}
+
+  body{ margin:0; background:var(--bg); color:var(--text); }
+  .wrap{ max-width:860px; margin:auto; padding:16px 14px 90px; }
 
   /* top bar */
-  .brand{font-size:16px;font-weight:700;letter-spacing:.4px;margin:6px 2px 14px}
+  .brand{ font-size:16px; font-weight:700; letter-spacing:.4px; margin:6px 2px 14px; }
 
   /* filter chips */
-  .chips{display:flex;gap:10px;flex-wrap:wrap;margin:8px 2px 14px}
+  .chips{ display:flex; gap:10px; flex-wrap:wrap; margin:8px 2px 14px; }
   .chip{
-    padding:10px 16px;border-radius:12px;border:1px solid var(--ring);
-    background:var(--btn);color:var(--text);cursor:pointer;font-weight:600;font-size:15px
+    padding:10px 16px; border-radius:12px; border:1px solid var(--ring);
+    background:transparent; color:var(--text); cursor:pointer; font-weight:600; font-size:15px;
+    transition: background .12s ease, border-color .12s ease, color .12s ease;
   }
   .chip.active{
-    background:#fff;
-    border-color:#fff;
-    color:#000;
+    background:#fff; border-color:#fff; color:#000;   /* ขาว/ดำล้วน */
+  }
+  .chip:focus-visible{
+    outline:none; box-shadow:0 0 0 3px rgba(255,255,255,.2);
   }
 
   /* list */
-  .list{display:flex;flex-direction:column;gap:14px}
+  .list{ display:flex; flex-direction:column; gap:14px; }
   .item{
-    background:var(--card);border:1px solid var(--ring);border-radius:18px;
-    padding:14px;display:flex;align-items:center;gap:12px;
-    box-shadow:0 10px 26px rgba(0,0,0,.25);
+    background:#000; border:1px solid var(--ring); border-radius:18px;
+    padding:14px; display:flex; align-items:center; gap:12px;
+    box-shadow:0 10px 26px rgba(0,0,0,.35);  /* เงอดำโปร่ง */
+    transition: background .08s ease, transform .08s ease, border-color .12s ease;
   }
+  .item:active{ transform:translateY(1px); background:rgba(255,255,255,.04); }
+
   .ico{
-    width:34px;height:34px;flex:0 0 34px;border-radius:9px;display:grid;place-items:center;
-    background:#0e141b;border:1px solid var(--ring);overflow:hidden
+    width:34px; height:34px; flex:0 0 34px; border-radius:9px; display:grid; place-items:center;
+    background:#000; border:1px solid var(--ring); overflow:hidden;
   }
-  .ico img{width:20px;height:20px;filter:grayscale(.1)}
-  .main{flex:1;min-width:0;cursor:pointer}
-  .title{font-weight:700;margin-bottom:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:15.5px}
-  .url{font-size:14px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .ico img{ width:20px; height:20px; filter:grayscale(1) brightness(.9); } /* ไม่มีสี */
 
-  .btns{display:flex;gap:6px}
+  .main{ flex:1; min-width:0; cursor:pointer; }
+  .title{
+    font-weight:700; margin-bottom:2px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; font-size:15.5px;
+  }
+  .url{
+    font-size:14px; color:var(--muted); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+  }
+
+  /* buttons (open/star/menu) */
+  .btns{ display:flex; gap:6px; }
   .btn{
-    width:38px;height:38px;border-radius:12px;border:1px solid var(--ring);
-    background:var(--btn);display:grid;place-items:center;cursor:pointer;
-    transition:background .15s ease,border-color .15s ease
+    width:38px; height:38px; border-radius:12px; border:1px solid var(--ring);
+    background:transparent; display:grid; place-items:center; cursor:pointer;
+    transition: background .12s ease, border-color .12s ease;
   }
-  .btn:hover{background:#121a23;border-color:#2a3644}
-  .btn svg{width:18px;height:18px;stroke:#c6d0dc}
-  .star.active svg{fill:var(--star);stroke:var(--star)}
-  .open{color:#c6d0dc}
-  .menu{position:relative}
+  .btn:hover{ background:rgba(255,255,255,.06); border-color:rgba(255,255,255,.24); }
+  .btn:focus-visible{ outline:none; box-shadow:0 0 0 3px rgba(255,255,255,.2); }
+
+  /* รีเซ็ตสี SVG ทั้งหมดให้ใช้ "ขาว" และควบคุมผ่านอัลฟ่าเท่านั้น */
+  .btn svg{ width:18px; height:18px; stroke:#fff !important; fill:transparent !important; opacity:.8; }
+  .open svg{ opacity:.7; }       /* ต่างด้วยอัลฟ่า ไม่ต้องใช้สีอื่น */
+  .menu > svg{ opacity:.6; }
+
+  /* ดาว: inactive เป็นเส้นขาวโปร่ง, active เติมขาวทึบ */
+  .star:not(.active) svg{ opacity:.55; }
+  .star.active svg{ fill:#fff !important; stroke:#fff !important; opacity:1; }
+
+  /* menu sheet */
+  .menu{ position:relative; }
   .menu .sheet{
-    position:absolute;right:0;top:46px;background:#0f141b;border:1px solid var(--ring);
-    border-radius:12px;box-shadow:0 16px 32px rgba(0,0,0,.35);overflow:hidden;display:none
+    position:absolute; right:0; top:46px; background:#000; border:1px solid var(--ring);
+    border-radius:12px; box-shadow:0 16px 32px rgba(0,0,0,.6); overflow:hidden; display:none;
   }
-  .menu.open .sheet{display:block}
+  .menu.open .sheet{ display:block; }
   .sheet button{
-    display:block;min-width:180px;padding:10px 14px;background:transparent;border:0;
-    border-bottom:1px solid var(--ring);text-align:left;cursor:pointer;font-size:15px;color:var(--text)
+    display:block; min-width:180px; padding:10px 14px; background:transparent; border:0;
+    border-bottom:1px solid var(--ring); text-align:left; cursor:pointer; font-size:15px; color:var(--text);
+    transition: background .12s ease;
   }
-  .sheet button:hover{background:#121a23}
-  .sheet button:last-child{border-bottom:0}
-  .sheet .danger{color:var(--danger)}
+  .sheet button:hover{ background:rgba(255,255,255,.06); }
+  .sheet button:last-child{ border-bottom:0; }
+  .sheet .danger{ color:#fff; opacity:.9; } /* ยังเป็นขาว (ไม่ใช้แดง) */
 
-  /* FAB (add button) */
+  /* FAB */
   .fab{
-    position:fixed;right:18px;bottom:20px;width:62px;height:62px;border-radius:20px;
-    background:#fff;border:1px solid #333;display:grid;place-items:center;
-    box-shadow:0 14px 30px rgba(255,255,255,.15);cursor:pointer
+    position:fixed; right:18px; bottom:20px; width:62px; height:62px; border-radius:20px;
+    background:#fff; border:1px solid #000; display:grid; place-items:center;
+    box-shadow:0 14px 30px rgba(255,255,255,.15); cursor:pointer;
   }
-  .fab svg{width:26px;height:26px;color:#000}
+  .fab svg{ width:26px; height:26px; color:#000; }
 
-  /* modal (Add link) */
+  /* Modal */
   .dim{
-    position:fixed;inset:0;background:rgba(0,0,0,.45);display:none;align-items:center;justify-content:center;
+    position:fixed; inset:0; background:rgba(0,0,0,.6); display:none; align-items:center; justify-content:center;
     padding:0 14px;
   }
   .modal{
-    background:#0f141b;border-radius:12px;
-    padding:16px;border:1px solid var(--ring);width:100%;max-width:560px;
-    box-shadow:0 18px 40px rgba(0,0,0,.45)
+    background:#000; border-radius:12px; padding:16px; border:1px solid var(--ring); width:100%; max-width:560px;
+    box-shadow:0 18px 40px rgba(0,0,0,.65);
   }
-  .row{display:flex;flex-direction:column;gap:8px;margin:8px 0}
+  .row{ display:flex; flex-direction:column; gap:8px; margin:8px 0; }
   input{
-    width:100%;padding:12px 14px;border-radius:10px;border:1px solid var(--ring);
-    background:#0c1117;color:var(--text);font-size:15.5px
+    width:100%; padding:12px 14px; border-radius:10px; border:1px solid var(--ring);
+    background:#000; color:var(--text); font-size:15.5px;
+  }
+  input:focus{
+    outline:none !important; border-color:rgba(255,255,255,.24); box-shadow:none !important; background:#000;
   }
 
   /* ปุ่ม Save / Cancel */
-  .actions{display:flex;gap:10px;margin-top:8px}
+  .actions{ display:flex; gap:10px; margin-top:8px; }
   .primary, .ghost{
-    background:#fff;color:#000;border:1px solid #333;
-    padding:12px 16px;border-radius:10px;cursor:pointer;font-weight:600;font-size:15.5px
+    background:#fff; color:#000; border:1px solid #000;
+    padding:12px 16px; border-radius:10px; cursor:pointer; font-weight:600; font-size:15.5px;
+    transition: background .12s ease;
   }
-  .primary:hover, .ghost:hover{background:#e6e6e6}
+  .ghost{
+    background:transparent; color:#fff; border:1px solid var(--ring);
+  }
+  .primary:hover{ background:rgba(255,255,255,.9); }
+  .ghost:hover{ background:rgba(255,255,255,.06); border-color:rgba(255,255,255,.24); }
 
-  .empty{color:var(--muted);text-align:center;margin-top:40px;font-size:15px}
-
-  /* ปิด tap highlight */
-  * { -webkit-tap-highlight-color: transparent; }
+  .empty{ color:var(--muted); text-align:center; margin-top:40px; font-size:15px; }
 
   /* ไม่ให้ select ข้อความ */
-  .item, .main, .title, .url, .btn, .chip {
-    user-select: none;
-    -webkit-user-select: none;
-    -ms-user-select: none;
+  .item, .main, .title, .url, .btn, .chip{
+    user-select:none; -webkit-user-select:none; -ms-user-select:none;
   }
 
-  /* เอฟเฟกต์ตอนกด */
-  .item:active { 
-    transform: translateY(1px);
-    background:#0f141b;
-    transition: background .08s ease, transform .08s ease;
-  }
-
-  /* focus effect */
-  .btn:focus-visible, .chip:focus-visible, .fab:focus-visible {
-    outline: none;
-    box-shadow: 0 0 0 3px rgba(255,255,255,.2);
-  }
-
-  ::selection { background: transparent; }    
-
-  /* input focus */
-  input:focus {
-    outline: none !important;
-    border-color: #2a3644;
-    box-shadow: none !important;
-    background: #0c1117;
-  }
+  ::selection{ background:transparent; }
 </style>
 </head>
 <body>
