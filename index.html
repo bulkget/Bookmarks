@@ -30,7 +30,7 @@
   /* filter chips */
   .chips{ display:flex; gap:10px; flex-wrap:wrap; margin:8px 2px 14px; }
   .chip{
-    padding:10px 16px; border-radius:12px; border:1px solid var(--ring);
+    padding:10px 16px; border-radius:6px; border:1px solid var(--ring);
     background:transparent; color:var(--text); cursor:pointer; font-weight:600; font-size:15px;
     transition: background .12s ease, border-color .12s ease, color .12s ease;
   }
@@ -44,7 +44,7 @@
   /* list */
   .list{ display:flex; flex-direction:column; gap:14px; }
   .item{
-    background:#000; border:1px solid var(--ring); border-radius:18px;
+    background:#000; border:1px solid var(--ring); border-radius:6px;
     padding:14px; display:flex; align-items:center; gap:12px;
     box-shadow:0 10px 26px rgba(0,0,0,.35);  /* เงอดำโปร่ง */
     transition: background .08s ease, transform .08s ease, border-color .12s ease;
@@ -52,7 +52,7 @@
   .item:active{ transform:translateY(1px); background:rgba(255,255,255,.04); }
 
   .ico{
-    width:34px; height:34px; flex:0 0 34px; border-radius:9px; display:grid; place-items:center;
+    width:34px; height:34px; flex:0 0 34px; border-radius:6px; display:grid; place-items:center;
     background:#000; border:1px solid var(--ring); overflow:hidden;
   }
   .ico img{ width:20px; height:20px; filter:grayscale(1) brightness(.9); } /* ไม่มีสี */
@@ -68,7 +68,7 @@
   /* buttons (open/star/menu) */
   .btns{ display:flex; gap:6px; }
   .btn{
-    width:38px; height:38px; border-radius:12px; border:1px solid var(--ring);
+    width:38px; height:38px; border-radius:6px; border:1px solid var(--ring);
     background:transparent; display:grid; place-items:center; cursor:pointer;
     transition: background .12s ease, border-color .12s ease;
   }
@@ -102,7 +102,7 @@
 
   /* FAB */
   .fab{
-    position:fixed; right:18px; bottom:20px; width:62px; height:62px; border-radius:20px;
+    position:fixed; right:18px; bottom:20px; width:50px; height:50px; border-radius:6px;
     background:#fff; border:1px solid #000; display:grid; place-items:center;
     box-shadow:0 14px 30px rgba(255,255,255,.15); cursor:pointer;
   }
@@ -114,12 +114,12 @@
     padding:0 14px;
   }
   .modal{
-    background:#000; border-radius:12px; padding:16px; border:1px solid var(--ring); width:100%; max-width:560px;
+    background:#000; border-radius:6px; padding:16px; border:1px solid var(--ring); width:100%; max-width:560px;
     box-shadow:0 18px 40px rgba(0,0,0,.65);
   }
   .row{ display:flex; flex-direction:column; gap:8px; margin:8px 0; }
   input{
-    width:100%; padding:12px 14px; border-radius:10px; border:1px solid var(--ring);
+    width:100%; padding:12px 14px; border-radius:6px; border:1px solid var(--ring);
     background:#000; color:var(--text); font-size:15.5px;
   }
   input:focus{
@@ -130,7 +130,7 @@
   .actions{ display:flex; gap:10px; margin-top:8px; }
   .primary, .ghost{
     background:#fff; color:#000; border:1px solid #000;
-    padding:12px 16px; border-radius:10px; cursor:pointer; font-weight:600; font-size:15.5px;
+    padding:12px 16px; border-radius:6px; cursor:pointer; font-weight:600; font-size:15.5px;
     transition: background .12s ease;
   }
   .ghost{
