@@ -5,7 +5,7 @@
 <style>
   body{margin:0;padding:16px;font:16px/1.6 system-ui,Segoe UI,Roboto,Arial;background:#0b0b0b;color:#eee}
   .wrap{max-width:760px;margin:auto}
-  input,button{font:16px;padding:10px;border-radius:10px;border:0;outline:0}
+  input,button{font:16px;padding:10px;border-radius:10px;border:0}
   input{width:100%;background:#1a1a1a;color:#fff;margin:6px 0}
   button{background:#3b82f6;color:#fff;margin:6px 0}
   ul{list-style:none;padding:0;margin:0}
@@ -27,32 +27,29 @@
 <!-- Firebase v10 (modular) -->
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
-  import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js";
-  import { getDatabase, ref, onChildAdded, onChildRemoved, set, remove, push, serverTimestamp }
+  import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js";
+  import { getDatabase, ref, onChildAdded, onChildRemoved, set, remove, push }
     from "https://www.gstatic.com/firebasejs/10.12.5/firebase-database.js";
 
-  // TODO: ใส่ config โปรเจกต์ของคุณ (คีย์ฝั่ง client เปิดเผยได้ แต่ป้องกันด้วย Rules)
+  // ⬇️ วางค่าจริงของคุณตรงนี้
   const firebaseConfig = {
-    apiKey: "...",
-    authDomain: "...",
-    databaseURL: "https://<YOUR-PROJECT>.firebaseio.com",
-    projectId: "...",
-    appId: "..."
+    apiKey: "YOUR_API_KEY",
+    authDomain: "YOUR_PROJECT.firebaseapp.com",
+    databaseURL: "https://bookmarks-c2ec7-default-rtdb.firebaseio.com",
+    projectId: "bookmarks-c2ec7",
+    appId: "YOUR_APP_ID"
   };
 
   const app  = initializeApp(firebaseConfig);
   const auth = getAuth(app);
   const db   = getDatabase(app);
 
-  // รับ deviceId จากพารามิเตอร์
+  // รับ deviceId จาก ?device= ใน URL
   const params   = new URLSearchParams(location.search);
   const deviceId = params.get("device") || "guest";
 
-  // ล็อกอิน anonymous แล้วผูก uid = deviceId (ใช้ custom token จะดีที่สุด ถ้าไม่มี ให้ใช้ device เป็น key path)
-  signInAnonymously(auth);
-  onAuthStateChanged(auth, async (user) => {
-    // ถ้าอยากให้ uid == deviceId จริง ๆ ต้องใช้ custom auth; ถ้าไม่สะดวก ให้ยึด path ที่มี deviceId เป็นตัวป้องกันหลัก
-  });
+  // ล็อกอินแบบ anonymous (ต้อง Enable ใน Console แล้ว)
+  await signInAnonymously(auth);
 
   const listEl = document.getElementById('list');
   const form   = document.getElementById('f');
@@ -61,7 +58,7 @@
 
   const base = ref(db, `bookmarks/${deviceId}`);
 
-  // render item
+  // render
   const dom = {};
   function addRow(item){
     const li = document.createElement('li');
@@ -78,7 +75,7 @@
   }
   function removeRow(id){ const el = dom[id]; if(el){ el.remove(); delete dom[id]; } }
 
-  // realtime listeners
+  // realtime
   onChildAdded(base, (snap)=> addRow(snap.val()));
   onChildRemoved(base, (snap)=> removeRow(snap.key));
 
@@ -87,11 +84,10 @@
     e.preventDefault();
     const url = (urlEl.value||"").trim();
     if(!/^https?:\/\//i.test(url)){ alert("URL ต้องขึ้นต้นด้วย http(s)://"); return; }
-    const name = (nameEl.value||"").trim();
-    const id   = push(ref(db)).key; // สร้าง id
-    const item = { id, name, url, ts: Date.now() };
+    const id   = push(ref(db)).key;
+    const item = { id, name: (nameEl.value||"").trim(), url, ts: Date.now() };
     await set(ref(db, `bookmarks/${deviceId}/${id}`), item);
-    nameEl.value = ""; urlEl.value = "";
+    nameEl.value=""; urlEl.value="";
   };
 </script>
 </body></html>
