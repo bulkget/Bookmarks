@@ -1,105 +1,39 @@
-<!doctype html>
-<html lang="en">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Bookmarks</title>
-<style>
-  :root{--bg:#0b0b0b;--panel:#121418;--ring:#1f2937;--text:#e9eef5;--muted:#aab3be;--accent:#3b82f6;--danger:#ef4444}
-  *{box-sizing:border-box} body{margin:0;background:var(--bg);color:var(--text);font:16px/1.5 system-ui,Segoe UI,Roboto,Arial}
-  .wrap{max-width:760px;margin:auto;padding:20px}
-  .card{background:var(--panel);border:1px solid var(--ring);border-radius:14px;padding:14px}
-  form{display:grid;grid-template-columns:1fr 1fr auto;gap:10px}
-  input{background:#161a20;border:1px solid var(--ring);color:var(--text);padding:12px;border-radius:10px;outline:none}
-  input:focus{border-color:var(--accent)}
-  button{border:0;border-radius:10px;padding:12px 16px;background:var(--accent);color:#fff;cursor:pointer;font-weight:600}
-  button:disabled{opacity:.5;cursor:not-allowed}
-  ul{list-style:none;margin:12px 0 0;padding:0;display:flex;flex-direction:column;gap:8px}
-  li{display:flex;align-items:center;gap:10px;padding:10px 12px;border:1px solid var(--ring);border-radius:10px;background:#0f1216}
-  .title{font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-  .url{font-size:13px;color:#9ec1ff;text-decoration:none;word-break:break-all}
-  .sp{flex:1;min-width:0}
-  .del{background:#1a0f11;border:1px solid #3a0d13;color:#ffd7dd;padding:8px 10px;border-radius:8px;cursor:pointer}
-  @media(max-width:700px){form{grid-template-columns:1fr;}}
-</style>
-</head>
-<body>
-<div class="wrap">
-  <div class="card">
-    <form id="f" autocomplete="off">
-      <input id="name" placeholder="Title (optional)">
-      <input id="url" placeholder="https://">
-      <button id="addBtn" type="submit" disabled>Add</button>
-    </form>
-    <ul id="list"></ul>
-  </div>
-</div>
-
+<!doctype html><meta charset="utf-8">
+<title>FB Test</title>
+<pre id="out">starting…</pre>
 <script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
-  import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js";
-  import { getDatabase, ref, onChildAdded, onChildRemoved, set, remove, push }
-    from "https://www.gstatic.com/firebasejs/10.12.5/firebase-database.js";
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
+import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js";
+import { getDatabase, ref, set } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-database.js";
 
-  // <<< PUT YOUR REAL CONFIG HERE >>>
-  const firebaseConfig = {
-    apiKey: "YOUR_API_KEY",
-    authDomain: "bookmarks-c2ec7.firebaseapp.com",
-    databaseURL: "https://bookmarks-c2ec7-default-rtdb.firebaseio.com",
-    projectId: "bookmarks-c2ec7",
-    appId: "YOUR_APP_ID"
-  };
+const out = (m)=>document.getElementById('out').textContent += "\n"+m;
 
+// <<< ใส่ config จริงของคุณที่นี่ >>>
+const firebaseConfig = {
+  apiKey: "YOUR_API_KEY",
+  authDomain: "bookmarks-c2ec7.firebaseapp.com",
+  databaseURL: "https://bookmarks-c2ec7-default-rtdb.firebaseio.com",
+  projectId: "bookmarks-c2ec7",
+  appId: "YOUR_APP_ID"
+};
+
+try{
   const app = initializeApp(firebaseConfig);
+  out("app init OK");
   const auth = getAuth(app);
   const db   = getDatabase(app);
 
-  const form  = document.getElementById('f');
-  const nameI = document.getElementById('name');
-  const urlI  = document.getElementById('url');
-  const addBt = document.getElementById('addBtn');
-  const list  = document.getElementById('list');
+  signInAnonymously(auth).catch(e=>out("signIn error: "+e.code+" / "+e.message));
 
-  const isURL = v => /^https?:\/\/.+/i.test((v||'').trim());
-  urlI.addEventListener('input',()=> addBt.disabled = !isURL(urlI.value));
-
-  const rows = {};
-  const makeRow = (basePath, item) => {
-    const li = document.createElement('li'); li.id = item.id;
-    li.innerHTML = `
-      <div class="sp">
-        <div class="title">${(item.name || safeHost(item.url))}</div>
-        <a class="url" href="${item.url}" target="_blank" rel="noopener">${item.url}</a>
-      </div>
-      <button class="del">Delete</button>`;
-    li.querySelector('.del').onclick = () => remove(ref(db, `${basePath}/${item.id}`));
-    list.prepend(li); rows[item.id] = li;
-  };
-  const removeRow = id => { const el = rows[id]; if(el){ el.remove(); delete rows[id]; } };
-  const safeHost = u => { try { return new URL(u).host } catch { return u } };
-
-  // Sign-in (Anonymous) -> use user.uid as key (matches your rules)
-  signInAnonymously(auth).catch(console.error);
-
-  onAuthStateChanged(auth, (user)=>{
-    if(!user) return;
-    const basePath = `bookmarks/${user.uid}`;
-    const baseRef  = ref(db, basePath);
-
-    onChildAdded(baseRef, snap => makeRow(basePath, snap.val()));
-    onChildRemoved(baseRef, snap => removeRow(snap.key));
-
-    form.onsubmit = async (e)=>{
-      e.preventDefault();
-      const url = urlI.value.trim();
-      if(!isURL(url)) return;
-      const name = (nameI.value||'').trim();
-      const newRef = push(baseRef);
-      const item = { id:newRef.key, name, url, ts: Date.now() };
-      await set(newRef, item);
-      nameI.value=''; urlI.value=''; addBt.disabled = true;
-    };
+  onAuthStateChanged(auth, async (user)=>{
+    if(!user){ out("no user"); return; }
+    out("signed in uid="+user.uid);
+    try{
+      await set(ref(db, "ping/"+user.uid), { ts: Date.now() });
+      out("write OK");
+    }catch(e){ out("write error: "+e.code+" / "+e.message); }
   });
+}catch(e){
+  out("init error: "+e.message);
+}
 </script>
-</body>
-</html>
