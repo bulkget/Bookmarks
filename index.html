@@ -138,6 +138,16 @@
 
 /* 5) กันเบราว์เซอร์ทำ selection สีน้ำเงินบนบางเครื่อง */
 ::selection { background: transparent; }    
+
+
+/* ตัดขอบเหลืองตอนโฟกัสช่องกรอก */
+input:focus {
+  outline: none !important;
+  border-color: #2a3644;      /* เส้นขอบเข้มแบบดาร์ก */
+  box-shadow: none !important;/* ไม่ให้มีเงาสีเหลือง/ฟ้า */
+  background: #0c1117;        /* ให้คงสีพื้นเดิม */
+}
+
 </style></head>
 <body>
 <div class="wrap">
