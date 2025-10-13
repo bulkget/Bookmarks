@@ -1,39 +1,69 @@
-<!doctype html><meta charset="utf-8">
-<title>FB Test</title>
-<pre id="out">starting…</pre>
-<script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
-import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js";
-import { getDatabase, ref, set } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-database.js";
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>iOS Glass Menu</title>
 
-const out = (m)=>document.getElementById('out').textContent += "\n"+m;
-
-// <<< ใส่ config จริงของคุณที่นี่ >>>
-const firebaseConfig = {
-  apiKey: "YOUR_API_KEY",
-  authDomain: "bookmarks-c2ec7.firebaseapp.com",
-  databaseURL: "https://bookmarks-c2ec7-default-rtdb.firebaseio.com",
-  projectId: "bookmarks-c2ec7",
-  appId: "YOUR_APP_ID"
-};
-
-try{
-  const app = initializeApp(firebaseConfig);
-  out("app init OK");
-  const auth = getAuth(app);
-  const db   = getDatabase(app);
-
-  signInAnonymously(auth).catch(e=>out("signIn error: "+e.code+" / "+e.message));
-
-  onAuthStateChanged(auth, async (user)=>{
-    if(!user){ out("no user"); return; }
-    out("signed in uid="+user.uid);
-    try{
-      await set(ref(db, "ping/"+user.uid), { ts: Date.now() });
-      out("write OK");
-    }catch(e){ out("write error: "+e.code+" / "+e.message); }
-  });
-}catch(e){
-  out("init error: "+e.message);
+<style>
+body {
+  margin:0;
+  padding:0;
+  background:linear-gradient(135deg,#f4b183,#fce1d0);
+  height:100vh;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  font-family:-apple-system,system-ui,Roboto;
 }
-</script>
+
+/* ==== เมนูคอนเทนเนอร์ ==== */
+.menu {
+  display:flex;
+  gap:16px;
+  padding:10px 20px;
+  border-radius:40px;
+  backdrop-filter:blur(20px);
+  background:rgba(255,255,255,0.3);
+  box-shadow:0 4px 15px rgba(0,0,0,0.1);
+}
+
+/* ==== ปุ่มแต่ละอัน ==== */
+.menu button {
+  width:70px;
+  height:70px;
+  border:none;
+  border-radius:30px;
+  background:rgba(255,255,255,0.45);
+  backdrop-filter:blur(20px);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  cursor:pointer;
+  box-shadow:0 2px 8px rgba(0,0,0,0.15);
+  transition:all .25s ease;
+}
+
+.menu button:hover {
+  transform:translateY(-3px);
+  box-shadow:0 4px 12px rgba(0,0,0,0.25);
+}
+
+/* ==== ไอคอน ==== */
+.menu img {
+  width:34px;
+  height:34px;
+  filter:invert(0);
+}
+</style>
+</head>
+<body>
+
+<div class="menu">
+  <button><img src="https://cdn-icons-png.flaticon.com/512/3046/3046120.png" alt="TikTok"/></button>
+  <button><img src="https://cdn-icons-png.flaticon.com/512/3046/3046120.png" alt="TikTok"/></button>
+  <button><img src="https://cdn-icons-png.flaticon.com/512/174/174855.png" alt="Instagram"/></button>
+</div>
+
+</body>
+</html>
