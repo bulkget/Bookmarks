@@ -1,181 +1,136 @@
 <!doctype html>
 <html lang="en">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
 <title>Bookmarks</title>
 <style>
-  :root{
-    /* Dark-only, 3 สี: ขาว / ดำ / โปร่งใส (ใช้อัลฟ่าได้) */
-    --bg:#000;                 /* พื้นหลัง */
-    --text:#fff;               /* ตัวอักษรหลัก */
-    --muted:rgba(255,255,255,.65); /* ตัวอักษรรอง (ยังเป็น "ขาว" แต่ลดทอนด้วยอัลฟ่า) */
-    --ring:rgba(255,255,255,.14);  /* เส้นขอบ/เส้นแบ่ง (ขาวโปร่ง) */
-  }
+:root{--bg:#000;--text:#fff;--muted:rgba(255,255,255,.65);--ring:rgba(255,255,255,.14);}
+*{box-sizing:border-box;font-family:-apple-system,system-ui,Segoe UI,Roboto,sans-serif;font-size:15.5px;line-height:1.6;-webkit-tap-highlight-color:transparent;}
+body{margin:0;background:var(--bg);color:var(--text);}
+.wrap{max-width:860px;margin:auto;padding:16px 14px 90px;}
+/* chips */
+.chips{display:flex;gap:10px;flex-wrap:wrap;margin:8px 2px 12px;}
+.chip{padding:10px 16px;border-radius:6px;border:1px solid var(--ring);background:transparent;color:var(--text);cursor:pointer;font-weight:600;font-size:15px;transition:background .12s,border-color .12s,color .12s;user-select:none;}
+.chip.active{background:#fff;border-color:#fff;color:#000;}
+.chip.add{border-style:dashed;opacity:.9;}
+.chip.add:hover{background:rgba(255,255,255,.06);border-color:rgba(255,255,255,.24);}
+/* folder manager panel */
+.folder-panel{margin:10px 0;padding:10px;border:1px solid var(--ring);border-radius:8px;background:rgba(255,255,255,.03);}
+.folder-panel h4{margin:0 0 8px;font-size:15px;}
+.folder-row{display:flex;align-items:center;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--ring);}
+.folder-row:last-child{border-bottom:0;}
+.folder-row span{font-weight:600;}
+.folder-row button{background:transparent;border:1px solid var(--ring);color:#fff;padding:4px 8px;border-radius:4px;cursor:pointer;}
+.folder-row button:hover{background:rgba(255,255,255,.06);}
+.folder-add{display:flex;gap:8px;margin-top:8px;}
+.folder-add input{flex:1;padding:8px 10px;border:1px solid var(--ring);border-radius:6px;background:#000;color:#fff;}
+.folder-add button{padding:8px 12px;border-radius:6px;font-weight:600;cursor:pointer;}
+.folder-add .add-btn{background:#fff;color:#000;border:1px solid #000;}
+.folder-add .cancel-btn{background:transparent;color:#fff;border:1px solid var(--ring);}
+/* list */
+.list{display:flex;flex-direction:column;gap:14px;}
+.item{background:#000;border:1px solid var(--ring);border-radius:6px;padding:14px;display:flex;align-items:center;gap:12px;box-shadow:0 10px 26px rgba(0,0,0,.35);transition:background .08s,transform .08s;}
+.item:active{transform:translateY(1px);background:rgba(255,255,255,.04);}
+.ico{width:34px;height:34px;flex:0 0 34px;border-radius:6px;display:grid;place-items:center;background:#000;border:1px solid var(--ring);overflow:hidden;}
+.ico img{width:20px;height:20px;filter:grayscale(1) brightness(.9);}
+.main{flex:1;min-width:0;cursor:pointer;}
+.title{font-weight:700;margin-bottom:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.url{font-size:14px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.btns{display:flex;gap:6px;}
+.btn{width:38px;height:38px;border-radius:6px;border:1px solid var(--ring);background:transparent;display:grid;place-items:center;cursor:pointer;}
+.btn:hover{background:rgba(255,255,255,.06);}
+.btn svg{width:18px;height:18px;stroke:#fff;fill:none;opacity:.8;}
+/* menu */
+.menu{position:relative;}
 
-  *{
-    box-sizing:border-box;
-    font-family:-apple-system,system-ui,Segoe UI,Roboto,sans-serif;
-    font-size:15.5px;
-    line-height:1.6;
-    -webkit-tap-highlight-color: transparent;
-  }
 
-  body{ margin:0; background:var(--bg); color:var(--text); }
-  .wrap{ max-width:860px; margin:auto; padding:16px 14px 90px; }
+.menu .sheet{
+  position:absolute;
+  right:0;
+  top:46px;
+  background:#fff;                         /* white background */
+  border:1px solid rgba(0,0,0,.15);
+  border-radius:12px;
+  box-shadow:0 16px 32px rgba(0,0,0,.25);
+  overflow:hidden;
+  display:none;
+  backdrop-filter:blur(10px);              /* optional iOS-like blur */
+}
+.menu.open .sheet{display:block;}
+.sheet button{
+  display:block;
+  min-width:200px;
+  padding:10px 14px;
+  background:transparent;
+  border:0;
+  border-bottom:1px solid rgba(0,0,0,.08);
+  text-align:left;
+  cursor:pointer;
+  font-size:15px;
+  color:#000;                              /* black text */
+  transition:background .12s ease;
+}
+.sheet button:hover{
+  background:rgba(0,0,0,.06);              /* light gray hover */
+}
+.sheet button:last-child{
+  border-bottom:0;
+}
+.sheet .danger{
+  color:#d00;                              /* red delete */
+  opacity:1;
+}
 
-  /* top bar */
-  .brand{ font-size:16px; font-weight:700; letter-spacing:.4px; margin:6px 2px 14px; }
 
-  /* filter chips */
-  .chips{ display:flex; gap:10px; flex-wrap:wrap; margin:8px 2px 14px; }
-  .chip{
-    padding:10px 16px; border-radius:6px; border:1px solid var(--ring);
-    background:transparent; color:var(--text); cursor:pointer; font-weight:600; font-size:15px;
-    transition: background .12s ease, border-color .12s ease, color .12s ease;
-  }
-  .chip.active{
-    background:#fff; border-color:#fff; color:#000;   /* ขาว/ดำล้วน */
-  }
-  .chip:focus-visible{
-    outline:none; box-shadow:0 0 0 3px rgba(255,255,255,.2);
-  }
-
-  /* list */
-  .list{ display:flex; flex-direction:column; gap:14px; }
-  .item{
-    background:#000; border:1px solid var(--ring); border-radius:6px;
-    padding:14px; display:flex; align-items:center; gap:12px;
-    box-shadow:0 10px 26px rgba(0,0,0,.35);  /* เงอดำโปร่ง */
-    transition: background .08s ease, transform .08s ease, border-color .12s ease;
-  }
-  .item:active{ transform:translateY(1px); background:rgba(255,255,255,.04); }
-
-  .ico{
-    width:34px; height:34px; flex:0 0 34px; border-radius:6px; display:grid; place-items:center;
-    background:#000; border:1px solid var(--ring); overflow:hidden;
-  }
-  .ico img{ width:20px; height:20px; filter:grayscale(1) brightness(.9); } /* ไม่มีสี */
-
-  .main{ flex:1; min-width:0; cursor:pointer; }
-  .title{
-    font-weight:700; margin-bottom:2px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; font-size:15.5px;
-  }
-  .url{
-    font-size:14px; color:var(--muted); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
-  }
-
-  /* buttons (open/star/menu) */
-  .btns{ display:flex; gap:6px; }
-  .btn{
-    width:38px; height:38px; border-radius:6px; border:1px solid var(--ring);
-    background:transparent; display:grid; place-items:center; cursor:pointer;
-    transition: background .12s ease, border-color .12s ease;
-  }
-  .btn:hover{ background:rgba(255,255,255,.06); border-color:rgba(255,255,255,.24); }
-  .btn:focus-visible{ outline:none; box-shadow:0 0 0 3px rgba(255,255,255,.2); }
-
-  /* รีเซ็ตสี SVG ทั้งหมดให้ใช้ "ขาว" และควบคุมผ่านอัลฟ่าเท่านั้น */
-  .btn svg{ width:18px; height:18px; stroke:#fff !important; fill:transparent !important; opacity:.8; }
-  .open svg{ opacity:.7; }       /* ต่างด้วยอัลฟ่า ไม่ต้องใช้สีอื่น */
-  .menu > svg{ opacity:.6; }
-
-  /* ดาว: inactive เป็นเส้นขาวโปร่ง, active เติมขาวทึบ */
-  .star:not(.active) svg{ opacity:.55; }
-  .star.active svg{ fill:#fff !important; stroke:#fff !important; opacity:1; }
-
-  /* menu sheet */
-  .menu{ position:relative; }
-  .menu .sheet{
-    position:absolute; right:0; top:46px; background:#000; border:1px solid var(--ring);
-    border-radius:12px; box-shadow:0 16px 32px rgba(0,0,0,.6); overflow:hidden; display:none;
-  }
-  .menu.open .sheet{ display:block; }
-  .sheet button{
-    display:block; min-width:180px; padding:10px 14px; background:transparent; border:0;
-    border-bottom:1px solid var(--ring); text-align:left; cursor:pointer; font-size:15px; color:var(--text);
-    transition: background .12s ease;
-  }
-  .sheet button:hover{ background:rgba(255,255,255,.06); }
-  .sheet button:last-child{ border-bottom:0; }
-  .sheet .danger{ color:#fff; opacity:.9; } /* ยังเป็นขาว (ไม่ใช้แดง) */
-
-  /* FAB */
-  .fab{
-    position:fixed; right:18px; bottom:20px; width:50px; height:50px; border-radius:6px;
-    background:#fff; border:1px solid #000; display:grid; place-items:center;
-    box-shadow:0 14px 30px rgba(255,255,255,.15); cursor:pointer;
-  }
-  .fab svg{ width:26px; height:26px; color:#000; }
-
-  /* Modal */
-  .dim{
-    position:fixed; inset:0; background:rgba(0,0,0,.6); display:none; align-items:center; justify-content:center;
-    padding:0 14px;
-  }
-  .modal{
-    background:#000; border-radius:6px; padding:16px; border:1px solid var(--ring); width:100%; max-width:560px;
-    box-shadow:0 18px 40px rgba(0,0,0,.65);
-  }
-  .row{ display:flex; flex-direction:column; gap:8px; margin:8px 0; }
-  input{
-    width:100%; padding:12px 14px; border-radius:6px; border:1px solid var(--ring);
-    background:#000; color:var(--text); font-size:15.5px;
-  }
-  input:focus{
-    outline:none !important; border-color:rgba(255,255,255,.24); box-shadow:none !important; background:#000;
-  }
-
-  /* ปุ่ม Save / Cancel */
-  .actions{ display:flex; gap:10px; margin-top:8px; }
-  .primary, .ghost{
-    background:#fff; color:#000; border:1px solid #000;
-    padding:12px 16px; border-radius:6px; cursor:pointer; font-weight:600; font-size:15.5px;
-    transition: background .12s ease;
-  }
-  .ghost{
-    background:transparent; color:#fff; border:1px solid var(--ring);
-  }
-  .primary:hover{ background:rgba(255,255,255,.9); }
-  .ghost:hover{ background:rgba(255,255,255,.06); border-color:rgba(255,255,255,.24); }
-
-  .empty{ color:var(--muted); text-align:center; margin-top:40px; font-size:15px; }
-
-  /* ไม่ให้ select ข้อความ */
-  .item, .main, .title, .url, .btn, .chip{
-    user-select:none; -webkit-user-select:none; -ms-user-select:none;
-  }
-
-  ::selection{ background:transparent; }
+/* fab */
+.fab{position:fixed;right:18px;bottom:20px;width:50px;height:50px;border-radius:6px;background:#fff;border:1px solid #000;display:grid;place-items:center;cursor:pointer;}
+.fab svg{width:26px;height:26px;color:#000;}
+/* modal */
+.dim{position:fixed;inset:0;background:rgba(0,0,0,.6);display:none;align-items:center;justify-content:center;padding:0 14px;}
+.modal{background:#000;border-radius:6px;padding:16px;border:1px solid var(--ring);width:100%;max-width:560px;}
+.row{display:flex;flex-direction:column;gap:8px;margin:8px 0;}
+input,select{width:100%;padding:12px 14px;border-radius:6px;border:1px solid var(--ring);background:#000;color:#fff;}
+.actions{display:flex;gap:10px;margin-top:8px;}
+.primary,.ghost{padding:12px 16px;border-radius:6px;font-weight:600;cursor:pointer;}
+.primary{background:#fff;color:#000;border:1px solid #000;}
+.ghost{background:transparent;color:#fff;border:1px solid var(--ring);}
+.empty{color:var(--muted);text-align:center;margin-top:40px;}
 </style>
 </head>
 <body>
 <div class="wrap">
-<!--  div class="brand">Bookmarks div  -->
-
-  <div class="chips">
+  <div id="chips" class="chips">
     <div class="chip active" data-filter="all">All</div>
     <div class="chip" data-filter="fav">Favorites</div>
+    <button id="addFolderBtn" class="chip add">+ Folder</button>
+  </div>
+
+  <div id="folderPanel" class="folder-panel" style="display:none">
+    <h4>Folder List</h4>
+    <div id="folderList"></div>
+    <div class="folder-add">
+      <input id="folderInput" placeholder="Folder name"/>
+      <button class="add-btn" id="folderAddBtn">Add</button>
+      <button class="cancel-btn" id="folderCancelBtn">Close</button>
+    </div>
   </div>
 
   <div id="list" class="list"></div>
   <div id="empty" class="empty" style="display:none">No items yet</div>
 </div>
 
-<!-- FAB -->
 <button id="fab" class="fab" aria-label="Add">
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-    <path d="M12 5v14M5 12h14"/>
-  </svg>
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>
 </button>
 
-<!-- Modal Add/Edit -->
 <div id="dim" class="dim">
   <div class="modal">
-    <h3 id="modalTitle" style="margin:4px 0 6px;font-size:15.5px">Add Bookmark</h3>
+    <h3 id="modalTitle">Add Bookmark</h3>
     <div class="row">
-      <input id="titleIn" placeholder="Title (optional)">
-      <input id="urlIn" placeholder="https://example.com">
+      <input id="titleIn" placeholder="Title (optional)"/>
+      <input id="urlIn" placeholder="https://example.com"/>
+      <select id="folderIn"></select>
     </div>
     <div class="actions">
       <button id="saveBtn" class="primary">Save</button>
@@ -185,151 +140,191 @@
 </div>
 
 <script>
-(() => {
-  const $ = sel => document.querySelector(sel);
-  const $$ = sel => document.querySelectorAll(sel);
-
-  // storage
-  const KEY = 'bg_ios_cards';
-  let items = JSON.parse(localStorage.getItem(KEY) || '[]');
-  let filter = 'all';
-  let editingId = null;
-
-  // el
-  const listEl = $('#list');
-  const emptyEl = $('#empty');
-  const fab = $('#fab');
-  const dim = $('#dim');
-  const titleIn = $('#titleIn');
-  const urlIn = $('#urlIn');
-  const modalTitle = $('#modalTitle');
-
-  // utils
-  const save = () => localStorage.setItem(KEY, JSON.stringify(items));
-  const favicon = url => {
-    try { return 'https://www.google.com/s2/favicons?domain=' + new URL(url).hostname + '&sz=64'; }
-    catch { return 'https://www.google.com/s2/favicons?domain=example.com&sz=64'; }
-  };
-  const isURL = v => /^https?:\/\/.+/i.test(v || '');
-
-  // render
-  function render() {
-    listEl.innerHTML = '';
-    const data = items.filter(x => filter==='fav' ? x.fav : true);
-    emptyEl.style.display = data.length ? 'none' : 'block';
-
-    data.forEach(item => {
-      const li = document.createElement('div');
-      li.className = 'item';
-      li.innerHTML = `
-        <div class="ico"><img src="${favicon(item.url)}" alt=""></div>
-        <div class="main">
-          <div class="title">${item.title || new URL(item.url).hostname}</div>
-          <div class="url">${item.url}</div>
-        </div>
-        <div class="btns">
-          <button class="btn star ${item.fav ? 'active':''}" title="Favorite">
-            <svg viewBox="0 0 24 24" fill="none" stroke="#9aa3af" stroke-width="2">
-              <path d="M12 17.3l-6.16 3.73L7 13.4 2 9.27l6.91-1L12 2l3.09 6.27L22 9.27l-5 4.13 1.16 7.63L12 17.3z"/>
-            </svg>
-          </button>
-          <button class="btn open" title="Open">
-            <svg viewBox="0 0 24 24" fill="none" stroke="#334155" stroke-width="2">
-              <circle cx="12" cy="12" r="9"/><path d="M2 12h20M12 2a15 15 0 010 20M12 2a15 15 0 000 20"/>
-            </svg>
-          </button>
-          <div class="btn menu" title="More">
-            <svg viewBox="0 0 24 24" fill="none" stroke="#64748b" stroke-width="2">
-              <path d="M6 9l6 6 6-6"/>
-            </svg>
-            <div class="sheet">
-              <button class="editBtn">Edit</button>
-              <button class="copyBtn">Copy URL</button>
-              <button class="delBtn danger">Delete</button>
-            </div>
+(()=>{const $=s=>document.querySelector(s);
+// keys
+const KEY_ITEMS="bg_ios_cards",KEY_FOLD="bg_ios_folders";
+// state
+let items=JSON.parse(localStorage.getItem(KEY_ITEMS)||"[]");
+let folders=JSON.parse(localStorage.getItem(KEY_FOLD)||"[]");
+let filter="all",filterFolderId=null,editingId=null;
+// els
+const chips=$("#chips"),addFolder=$("#addFolderBtn");
+const folderPanel=$("#folderPanel"),folderList=$("#folderList"),folderInput=$("#folderInput"),folderAddBtn=$("#folderAddBtn"),folderCancelBtn=$("#folderCancelBtn");
+const list=$("#list"),empty=$("#empty"),fab=$("#fab");
+const dim=$("#dim"),titleIn=$("#titleIn"),urlIn=$("#urlIn"),folderIn=$("#folderIn"),modalTitle=$("#modalTitle");
+// utils
+const saveItems=()=>localStorage.setItem(KEY_ITEMS,JSON.stringify(items));
+const saveFolders=()=>localStorage.setItem(KEY_FOLD,JSON.stringify(folders));
+const isURL=v=>/^https?:\/\/.+/i.test(v||"");
+const favicon=u=>{try{return"https://www.google.com/s2/favicons?domain="+new URL(u).hostname+"&sz=64"}catch{return"https://www.google.com/s2/favicons?domain=example.com&sz=64"}};
+const byId=(a,i)=>a.find(x=>x.id===i);
+const host=u=>{try{return new URL(u).hostname}catch{return u}};
+// chips render
+function renderChips(){
+  [...chips.querySelectorAll(".chip.folder")].forEach(n=>n.remove());
+  const insert=addFolder;
+  folders.forEach(f=>{
+    const c=document.createElement("div");
+    c.className="chip folder";
+    c.dataset.filter="folder";
+    c.dataset.folderId=f.id;
+    c.textContent=f.name;
+    chips.insertBefore(c,insert);
+  });
+  setActiveChip();
+} // end
+function setActiveChip(){
+  chips.querySelectorAll(".chip").forEach(c=>c.classList.remove("active"));
+  if(filter==="all"){chips.querySelector('[data-filter="all"]')?.classList.add("active");}
+  else if(filter==="fav"){chips.querySelector('[data-filter="fav"]')?.classList.add("active");}
+  else if(filter==="folder"&&filterFolderId){chips.querySelector(`[data-folder-id="${filterFolderId}"]`)?.classList.add("active");}
+} // end
+// folder manager
+function renderFolderList(){
+  folderList.innerHTML="";
+  folders.forEach(f=>{
+    const row=document.createElement("div");
+    row.className="folder-row";
+    row.innerHTML=`<span>${f.name}</span><button data-id="${f.id}" title="Delete">×</button>`;
+    row.querySelector("button").onclick=()=>{
+      folders=folders.filter(x=>x.id!==f.id);
+      // detach folder from items, keep bookmarks
+      items=items.map(it=>it.folderId===f.id?({...it,folderId:null}):it);
+      saveFolders();saveItems();
+      renderFolderList();renderChips();renderList();
+    };
+    folderList.appendChild(row);
+  });
+} // end
+addFolder.onclick=()=>{
+  const show=folderPanel.style.display==="none";
+  folderPanel.style.display=show?"block":"none";
+  if(show){renderFolderList();}
+}; // end
+folderAddBtn.onclick=()=>{
+  const name=(folderInput.value||"").trim();
+  if(!name) return;
+  let final=name,n=2;
+  while(folders.some(f=>f.name.toLowerCase()===final.toLowerCase())) final=name+" ("+(n++)+")";
+  const id="f_"+Date.now().toString(36)+Math.random().toString(36).slice(2,6);
+  folders.push({id,name:final});
+  saveFolders();folderInput.value="";renderFolderList();renderChips();
+}; // end
+folderCancelBtn.onclick=()=>{folderPanel.style.display="none";}; // end
+function renderFolderSelect(sel=null){
+  folderIn.innerHTML="";
+  const opt=document.createElement("option");opt.value="";opt.textContent="— No folder —";folderIn.appendChild(opt);
+  folders.forEach(f=>{const o=document.createElement("option");o.value=f.id;o.textContent=f.name;folderIn.appendChild(o);});
+  folderIn.value=sel||"";
+} // end
+// chip clicks
+chips.addEventListener("click",e=>{
+  const chip=e.target.closest(".chip");
+  if(!chip||chip.classList.contains("add")) return;
+  const mode=chip.dataset.filter;
+  if(mode==="all"){filter="all";filterFolderId=null;}
+  else if(mode==="fav"){filter="fav";filterFolderId=null;}
+  else if(mode==="folder"){filter="folder";filterFolderId=chip.dataset.folderId||null;}
+  setActiveChip();renderList();
+}); // end
+// list render with item menu
+function renderList(){
+  list.innerHTML="";
+  const data=items.filter(x=>
+    filter==="fav"?x.fav:(filter==="folder"?(x.folderId||"")===((filterFolderId)||""):true)
+  );
+  empty.style.display=data.length?"none":"block";
+  data.forEach(item=>{
+    const li=document.createElement("div");
+    li.className="item";
+    const badge=item.folderId?`<span style="font-size:12px;color:var(--muted)"> · ${byId(folders,item.folderId)?.name||""}</span>`:"";
+    li.innerHTML=`
+      <div class="ico"><img src="${favicon(item.url)}" alt=""></div>
+      <div class="main">
+        <div class="title">${item.title||host(item.url)}${badge}</div>
+        <div class="url">${item.url}</div>
+      </div>
+      <div class="btns">
+        <button class="btn star ${item.fav?"active":""}" title="Favorite">
+          <svg viewBox="0 0 24 24"><path d="M12 17.3l-6.16 3.73L7 13.4 2 9.27l6.91-1L12 2l3.09 6.27L22 9.27l-5 4.13 1.16 7.63L12 17.3z"/></svg>
+        </button>
+        <button class="btn open" title="Open">
+          <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M2 12h20"/></svg>
+        </button>
+        <div class="btn menu" title="More">
+          <svg viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg>
+          <div class="sheet">
+            <button class="editBtn">Edit</button>
+            <button class="moveBtn">Move to folder…</button>
+            <button class="copyBtn">Copy URL</button>
+            <button class="delBtn danger">Delete</button>
           </div>
         </div>
-      `;
-
-      // เปิดลิงก์ในหน้าเดิม
-      li.querySelector('.main').onclick = () => location.href = item.url;
-      li.querySelector('.open').onclick = e => { e.stopPropagation(); location.href = item.url; };
-
-      // favorite toggle
-      li.querySelector('.star').onclick = e => {
-        e.stopPropagation();
-        item.fav = !item.fav; save(); render();
-      };
-
-      // menu
-      const menu = li.querySelector('.menu');
-      menu.onclick = e => {
-        e.stopPropagation();
-        menu.classList.toggle('open');
-      };
-      document.addEventListener('click', () => menu.classList.remove('open'), { once:true });
-
-      // actions
-      li.querySelector('.delBtn').onclick = e => {
-        e.stopPropagation();
-        items = items.filter(x => x.id !== item.id);
-        save(); render();
-      };
-      li.querySelector('.copyBtn').onclick = async e => {
-        e.stopPropagation();
-        try { await navigator.clipboard.writeText(item.url); } catch {}
-        menu.classList.remove('open');
-      };
-      li.querySelector('.editBtn').onclick = e => {
-        e.stopPropagation();
-        openModal('Edit Bookmark');
-        editingId = item.id;
-        titleIn.value = item.title || '';
-        urlIn.value = item.url || '';
-      };
-
-      listEl.appendChild(li);
-    });
-  }
-
-  // modal
-  function openModal(title='Add Bookmark'){
-    modalTitle.textContent = title;
-    dim.style.display = 'flex';
-    setTimeout(() => urlIn.focus(), 50);
-  }
-  function closeModal(){
-    dim.style.display = 'none';
-    titleIn.value = ''; urlIn.value = ''; editingId = null;
-  }
-
-  // events
-  document.getElementById('cancelBtn').onclick = closeModal;
-  document.getElementById('saveBtn').onclick = () => {
-    const url = urlIn.value.trim();
-    if (!isURL(url)) { alert('URL must start with http(s)://'); return; }
-    const title = titleIn.value.trim();
-    if (editingId){
-      const idx = items.findIndex(x => x.id === editingId);
-      if (idx > -1){ items[idx].title = title; items[idx].url = url; }
-    } else {
-      items.unshift({ id: Date.now()+Math.random().toString(36).slice(2,8), title, url, fav:false, ts: Date.now() });
-    }
-    save(); render(); closeModal();
-  };
-  fab.onclick = () => openModal('Add Bookmark');
-
-  // filters
-  $$('.chip').forEach(ch => ch.onclick = () => {
-    $$('.chip').forEach(c => c.classList.remove('active'));
-    ch.classList.add('active');
-    filter = ch.dataset.filter;
-    render();
+      </div>
+    `;
+    // open
+    li.querySelector(".main").onclick=()=>location.href=item.url;
+    li.querySelector(".open").onclick=e=>{e.stopPropagation();location.href=item.url;};
+    // star
+    li.querySelector(".star").onclick=e=>{e.stopPropagation();item.fav=!item.fav;saveItems();renderList();};
+    // menu toggle
+    const menu=li.querySelector(".menu");
+    menu.onclick=e=>{e.stopPropagation();menu.classList.toggle("open");};
+    document.addEventListener("click",()=>menu.classList.remove("open"),{once:true});
+    // delete
+    li.querySelector(".delBtn").onclick=e=>{
+      e.stopPropagation();
+      items=items.filter(x=>x.id!==item.id);
+      saveItems();renderList();
+    };
+    // copy
+    li.querySelector(".copyBtn").onclick=async e=>{
+      e.stopPropagation();
+      try{await navigator.clipboard.writeText(item.url);}catch{}
+      menu.classList.remove("open");
+    };
+    // edit
+    li.querySelector(".editBtn").onclick=e=>{
+      e.stopPropagation();
+      openModal("Edit Bookmark");
+      editingId=item.id;
+      titleIn.value=item.title||"";
+      urlIn.value=item.url||"";
+      renderFolderSelect(item.folderId||"");
+    };
+    // move
+    li.querySelector(".moveBtn").onclick=e=>{
+      e.stopPropagation();
+      openModal("Move Bookmark");
+      editingId=item.id;
+      titleIn.value=item.title||"";
+      urlIn.value=item.url||"";
+      renderFolderSelect(item.folderId||"");
+    };
+    list.appendChild(li);
   });
-
-  // boot
-  render();
-})();
+} // end
+// modal
+function openModal(t="Add Bookmark"){modalTitle.textContent=t;dim.style.display="flex";setTimeout(()=>urlIn.focus(),30);} // end
+function closeModal(){dim.style.display="none";titleIn.value="";urlIn.value="";editingId=null;} // end
+document.getElementById("cancelBtn").onclick=closeModal;
+document.getElementById("saveBtn").onclick=()=>{
+  const url=urlIn.value.trim();
+  if(!isURL(url)){alert("URL must start with http(s)://");return;}
+  const title=titleIn.value.trim();
+  const folderId=folderIn.value||null;
+  if(editingId){
+    const i=items.findIndex(x=>x.id===editingId);
+    if(i>-1){items[i].title=title;items[i].url=url;items[i].folderId=folderId;}
+  }else{
+    items.unshift({id:Date.now()+Math.random().toString(36).slice(2,8),title,url,fav:false,ts:Date.now(),folderId});
+  }
+  saveItems();renderList();closeModal();
+}; // end
+fab.onclick=()=>{openModal("Add Bookmark");renderFolderSelect();}; // end
+// boot
+renderChips();renderList();
+})(); 
 </script>
 </body>
 </html>
