@@ -9,13 +9,15 @@
 *{box-sizing:border-box;font-family:-apple-system,system-ui,Segoe UI,Roboto,sans-serif;font-size:15.5px;line-height:1.6;-webkit-tap-highlight-color:transparent;}
 body{margin:0;background:var(--bg);color:var(--text);}
 .wrap{max-width:860px;margin:auto;padding:16px 14px 90px;}
+
 /* chips */
 .chips{display:flex;gap:10px;flex-wrap:wrap;margin:8px 2px 12px;}
 .chip{padding:10px 16px;border-radius:6px;border:1px solid var(--ring);background:transparent;color:var(--text);cursor:pointer;font-weight:600;font-size:15px;transition:background .12s,border-color .12s,color .12s;user-select:none;}
 .chip.active{background:#fff;border-color:#fff;color:#000;}
 .chip.add{border-style:dashed;opacity:.9;}
 .chip.add:hover{background:rgba(255,255,255,.06);border-color:rgba(255,255,255,.24);}
-/* folder manager panel */
+
+/* folder manager */
 .folder-panel{margin:10px 0;padding:10px;border:1px solid var(--ring);border-radius:8px;background:rgba(255,255,255,.03);}
 .folder-panel h4{margin:0 0 8px;font-size:15px;}
 .folder-row{display:flex;align-items:center;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--ring);}
@@ -28,6 +30,7 @@ body{margin:0;background:var(--bg);color:var(--text);}
 .folder-add button{padding:8px 12px;border-radius:6px;font-weight:600;cursor:pointer;}
 .folder-add .add-btn{background:#fff;color:#000;border:1px solid #000;}
 .folder-add .cancel-btn{background:transparent;color:#fff;border:1px solid var(--ring);}
+
 /* list */
 .list{display:flex;flex-direction:column;gap:14px;}
 .item{background:#000;border:1px solid var(--ring);border-radius:6px;padding:14px;display:flex;align-items:center;gap:12px;box-shadow:0 10px 26px rgba(0,0,0,.35);transition:background .08s,transform .08s;}
@@ -38,64 +41,54 @@ body{margin:0;background:var(--bg);color:var(--text);}
 .title{font-weight:700;margin-bottom:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
 .url{font-size:14px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
 .btns{display:flex;gap:6px;}
-.btn{width:38px;height:38px;border-radius:6px;border:1px solid var(--ring);background:transparent;display:grid;place-items:center;cursor:pointer;}
-.btn:hover{background:rgba(255,255,255,.06);}
-.btn svg{width:18px;height:18px;stroke:#fff;fill:none;opacity:.8;}
-/* menu */
+.btn{width:38px;height:38px;border-radius:6px;border:1px solid var(--ring);background:transparent;display:grid;place-items:center;cursor:pointer;transition:background .12s,border-color .12s;}
+.btn:hover{background:rgba(255,255,255,.06);border-color:rgba(255,255,255,.24);}
+.btn svg{width:18px;height:18px;stroke:#fff;fill:none;opacity:.85;pointer-events:none;}
+.star:not(.active) svg{opacity:.55;}
+.star.active svg{fill:#fff;stroke:#fff;opacity:1;}
+
+/* menu (white) */
 .menu{position:relative;}
-
-
 .menu .sheet{
-  position:absolute;
-  right:0;
-  top:46px;
-  background:#fff;                         /* white background */
-  border:1px solid rgba(0,0,0,.15);
-  border-radius:12px;
-  box-shadow:0 16px 32px rgba(0,0,0,.25);
-  overflow:hidden;
-  display:none;
-  backdrop-filter:blur(10px);              /* optional iOS-like blur */
+  position:absolute;right:0;top:46px;background:#fff;border:1px solid rgba(0,0,0,.15);
+  border-radius:12px;box-shadow:0 16px 32px rgba(0,0,0,.25);overflow:hidden;display:none;z-index:50;
 }
 .menu.open .sheet{display:block;}
 .sheet button{
-  display:block;
-  min-width:200px;
-  padding:10px 14px;
-  background:transparent;
-  border:0;
-  border-bottom:1px solid rgba(0,0,0,.08);
-  text-align:left;
-  cursor:pointer;
-  font-size:15px;
-  color:#000;                              /* black text */
-  transition:background .12s ease;
+  display:block;min-width:220px;padding:10px 14px;background:transparent;border:0;
+  border-bottom:1px solid rgba(0,0,0,.08);text-align:left;cursor:pointer;font-size:15px;color:#000;
+  transition:background .12s ease,color .12s ease;
 }
-.sheet button:hover{
-  background:rgba(0,0,0,.06);              /* light gray hover */
-}
-.sheet button:last-child{
-  border-bottom:0;
-}
-.sheet .danger{
-  color:#d00;                              /* red delete */
-  opacity:1;
-}
-
+.sheet button:hover{background:rgba(0,0,0,.06);color:#000;}
+.sheet button:active{background:rgba(0,0,0,.12);color:#000;}
+.sheet button:last-child{border-bottom:0;}
+.sheet .danger{color:#d00;opacity:1;}
 
 /* fab */
 .fab{position:fixed;right:18px;bottom:20px;width:50px;height:50px;border-radius:6px;background:#fff;border:1px solid #000;display:grid;place-items:center;cursor:pointer;}
 .fab svg{width:26px;height:26px;color:#000;}
+
 /* modal */
-.dim{position:fixed;inset:0;background:rgba(0,0,0,.6);display:none;align-items:center;justify-content:center;padding:0 14px;}
+.dim{position:fixed;inset:0;background:rgba(0,0,0,.6);display:none;align-items:center;justify-content:center;padding:0 14px;z-index:1000;}
 .modal{background:#000;border-radius:6px;padding:16px;border:1px solid var(--ring);width:100%;max-width:560px;}
 .row{display:flex;flex-direction:column;gap:8px;margin:8px 0;}
-input,select{width:100%;padding:12px 14px;border-radius:6px;border:1px solid var(--ring);background:#000;color:#fff;}
+input{width:100%;padding:12px 14px;border-radius:6px;border:1px solid var(--ring);background:#000;color:#fff;}
 .actions{display:flex;gap:10px;margin-top:8px;}
 .primary,.ghost{padding:12px 16px;border-radius:6px;font-weight:600;cursor:pointer;}
 .primary{background:#fff;color:#000;border:1px solid #000;}
 .ghost{background:transparent;color:#fff;border:1px solid var(--ring);}
 .empty{color:var(--muted);text-align:center;margin-top:40px;}
+
+/* custom select */
+.cselect{position:relative;user-select:none;}
+.cselect .display{width:100%;padding:12px 14px;border:1px solid var(--ring);border-radius:6px;background:#000;color:#fff;cursor:pointer;}
+.cselect.open .display{border-color:rgba(255,255,255,.24);}
+.cselect .options{position:absolute;left:0;right:0;top:calc(100% + 6px);background:#fff;border:1px solid rgba(0,0,0,.15);border-radius:10px;box-shadow:0 16px 32px rgba(0,0,0,.25);overflow:auto;max-height:240px;display:none;z-index:1100;}
+.cselect.open .options{display:block;}
+.cselect .opt{padding:10px 12px;cursor:pointer;font-weight:600;color:#000;}
+.cselect .opt:hover{background:rgba(0,0,0,.06);}
+.cselect .opt:active{background:rgba(0,0,0,.12);}
+.cselect .opt.muted{color:#555;font-weight:500;}
 </style>
 </head>
 <body>
@@ -130,7 +123,10 @@ input,select{width:100%;padding:12px 14px;border-radius:6px;border:1px solid var
     <div class="row">
       <input id="titleIn" placeholder="Title (optional)"/>
       <input id="urlIn" placeholder="https://example.com"/>
-      <select id="folderIn"></select>
+      <div id="folderSelect" class="cselect">
+        <div class="display">— No folder —</div>
+        <div class="options"></div>
+      </div>
     </div>
     <div class="actions">
       <button id="saveBtn" class="primary">Save</button>
@@ -140,26 +136,27 @@ input,select{width:100%;padding:12px 14px;border-radius:6px;border:1px solid var
 </div>
 
 <script>
-(()=>{const $=s=>document.querySelector(s);
-// keys
+(()=>{const $=s=>document.querySelector(s), $$=s=>document.querySelectorAll(s);
 const KEY_ITEMS="bg_ios_cards",KEY_FOLD="bg_ios_folders";
-// state
 let items=JSON.parse(localStorage.getItem(KEY_ITEMS)||"[]");
 let folders=JSON.parse(localStorage.getItem(KEY_FOLD)||"[]");
 let filter="all",filterFolderId=null,editingId=null;
-// els
+let openMenuRef=null;
+
 const chips=$("#chips"),addFolder=$("#addFolderBtn");
 const folderPanel=$("#folderPanel"),folderList=$("#folderList"),folderInput=$("#folderInput"),folderAddBtn=$("#folderAddBtn"),folderCancelBtn=$("#folderCancelBtn");
 const list=$("#list"),empty=$("#empty"),fab=$("#fab");
-const dim=$("#dim"),titleIn=$("#titleIn"),urlIn=$("#urlIn"),folderIn=$("#folderIn"),modalTitle=$("#modalTitle");
-// utils
+const dim=$("#dim"),titleIn=$("#titleIn"),urlIn=$("#urlIn"),modalTitle=$("#modalTitle");
+const cSel=$("#folderSelect"), cSelDisplay=cSel.querySelector(".display"), cSelOptions=cSel.querySelector(".options");
+
 const saveItems=()=>localStorage.setItem(KEY_ITEMS,JSON.stringify(items));
 const saveFolders=()=>localStorage.setItem(KEY_FOLD,JSON.stringify(folders));
 const isURL=v=>/^https?:\/\/.+/i.test(v||"");
 const favicon=u=>{try{return"https://www.google.com/s2/favicons?domain="+new URL(u).hostname+"&sz=64"}catch{return"https://www.google.com/s2/favicons?domain=example.com&sz=64"}};
 const byId=(a,i)=>a.find(x=>x.id===i);
 const host=u=>{try{return new URL(u).hostname}catch{return u}};
-// chips render
+
+// chips
 function renderChips(){
   [...chips.querySelectorAll(".chip.folder")].forEach(n=>n.remove());
   const insert=addFolder;
@@ -179,6 +176,16 @@ function setActiveChip(){
   else if(filter==="fav"){chips.querySelector('[data-filter="fav"]')?.classList.add("active");}
   else if(filter==="folder"&&filterFolderId){chips.querySelector(`[data-folder-id="${filterFolderId}"]`)?.classList.add("active");}
 } // end
+chips.addEventListener("click",e=>{
+  const chip=e.target.closest(".chip");
+  if(!chip||chip.classList.contains("add")) return;
+  const mode=chip.dataset.filter;
+  if(mode==="all"){filter="all";filterFolderId=null;}
+  else if(mode==="fav"){filter="fav";filterFolderId=null;}
+  else if(mode==="folder"){filter="folder";filterFolderId=chip.dataset.folderId||null;}
+  setActiveChip();renderList();
+}); // end
+
 // folder manager
 function renderFolderList(){
   folderList.innerHTML="";
@@ -188,7 +195,6 @@ function renderFolderList(){
     row.innerHTML=`<span>${f.name}</span><button data-id="${f.id}" title="Delete">×</button>`;
     row.querySelector("button").onclick=()=>{
       folders=folders.filter(x=>x.id!==f.id);
-      // detach folder from items, keep bookmarks
       items=items.map(it=>it.folderId===f.id?({...it,folderId:null}):it);
       saveFolders();saveItems();
       renderFolderList();renderChips();renderList();
@@ -199,7 +205,7 @@ function renderFolderList(){
 addFolder.onclick=()=>{
   const show=folderPanel.style.display==="none";
   folderPanel.style.display=show?"block":"none";
-  if(show){renderFolderList();}
+  if(show) renderFolderList();
 }; // end
 folderAddBtn.onclick=()=>{
   const name=(folderInput.value||"").trim();
@@ -208,32 +214,38 @@ folderAddBtn.onclick=()=>{
   while(folders.some(f=>f.name.toLowerCase()===final.toLowerCase())) final=name+" ("+(n++)+")";
   const id="f_"+Date.now().toString(36)+Math.random().toString(36).slice(2,6);
   folders.push({id,name:final});
-  saveFolders();folderInput.value="";renderFolderList();renderChips();
+  saveFolders();folderInput.value="";renderFolderList();renderChips();buildFolderSelect();
 }; // end
 folderCancelBtn.onclick=()=>{folderPanel.style.display="none";}; // end
-function renderFolderSelect(sel=null){
-  folderIn.innerHTML="";
-  const opt=document.createElement("option");opt.value="";opt.textContent="— No folder —";folderIn.appendChild(opt);
-  folders.forEach(f=>{const o=document.createElement("option");o.value=f.id;o.textContent=f.name;folderIn.appendChild(o);});
-  folderIn.value=sel||"";
+
+// custom select
+let cSelValue=null;
+function buildFolderSelect(selectedId=null){
+  cSelOptions.innerHTML="";
+  const make=(id,label,muted=false)=>{
+    const d=document.createElement("div");
+    d.className="opt"+(muted?" muted":"");
+    d.dataset.value=id||"";
+    d.textContent=label;
+    d.onclick=()=>{ cSelValue = id || null; cSelDisplay.textContent = label; cSel.classList.remove("open"); };
+    return d;
+  };
+  cSelOptions.appendChild(make("", "— No folder —", true));
+  folders.forEach(f=> cSelOptions.appendChild(make(f.id, f.name)));
+  cSelValue = selectedId || null;
+  cSelDisplay.textContent = selectedId ? (byId(folders,selectedId)?.name || "— No folder —") : "— No folder —";
 } // end
-// chip clicks
-chips.addEventListener("click",e=>{
-  const chip=e.target.closest(".chip");
-  if(!chip||chip.classList.contains("add")) return;
-  const mode=chip.dataset.filter;
-  if(mode==="all"){filter="all";filterFolderId=null;}
-  else if(mode==="fav"){filter="fav";filterFolderId=null;}
-  else if(mode==="folder"){filter="folder";filterFolderId=chip.dataset.folderId||null;}
-  setActiveChip();renderList();
-}); // end
-// list render with item menu
+cSel.querySelector(".display").onclick = (e)=>{ e.stopPropagation(); cSel.classList.toggle("open"); closeOpenMenu(); };
+document.addEventListener("click", ()=> cSel.classList.remove("open") ); // end
+
+// list
 function renderList(){
   list.innerHTML="";
   const data=items.filter(x=>
     filter==="fav"?x.fav:(filter==="folder"?(x.folderId||"")===((filterFolderId)||""):true)
   );
   empty.style.display=data.length?"none":"block";
+
   data.forEach(item=>{
     const li=document.createElement("div");
     li.className="item";
@@ -248,9 +260,6 @@ function renderList(){
         <button class="btn star ${item.fav?"active":""}" title="Favorite">
           <svg viewBox="0 0 24 24"><path d="M12 17.3l-6.16 3.73L7 13.4 2 9.27l6.91-1L12 2l3.09 6.27L22 9.27l-5 4.13 1.16 7.63L12 17.3z"/></svg>
         </button>
-        <button class="btn open" title="Open">
-          <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M2 12h20"/></svg>
-        </button>
         <div class="btn menu" title="More">
           <svg viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg>
           <div class="sheet">
@@ -262,57 +271,75 @@ function renderList(){
         </div>
       </div>
     `;
-    // open
+
     li.querySelector(".main").onclick=()=>location.href=item.url;
-    li.querySelector(".open").onclick=e=>{e.stopPropagation();location.href=item.url;};
-    // star
-    li.querySelector(".star").onclick=e=>{e.stopPropagation();item.fav=!item.fav;saveItems();renderList();};
-    // menu toggle
+
+    li.querySelector(".star").onclick=e=>{
+      e.stopPropagation();
+      item.fav=!item.fav;
+      saveItems();
+      e.currentTarget.classList.toggle("active", item.fav);
+    };
+
     const menu=li.querySelector(".menu");
-    menu.onclick=e=>{e.stopPropagation();menu.classList.toggle("open");};
-    document.addEventListener("click",()=>menu.classList.remove("open"),{once:true});
-    // delete
-    li.querySelector(".delBtn").onclick=e=>{
+    menu.addEventListener("click",e=>{
       e.stopPropagation();
-      items=items.filter(x=>x.id!==item.id);
-      saveItems();renderList();
-    };
-    // copy
-    li.querySelector(".copyBtn").onclick=async e=>{
-      e.stopPropagation();
-      try{await navigator.clipboard.writeText(item.url);}catch{}
-      menu.classList.remove("open");
-    };
-    // edit
+      if(openMenuRef && openMenuRef!==menu) openMenuRef.classList.remove("open");
+      menu.classList.toggle("open");
+      openMenuRef = menu.classList.contains("open") ? menu : null;
+      cSel.classList.remove("open");
+    });
+    document.addEventListener("click",()=>{ if(openMenuRef){openMenuRef.classList.remove("open"); openMenuRef=null;} },{once:true});
+
     li.querySelector(".editBtn").onclick=e=>{
       e.stopPropagation();
+      closeOpenMenu();
       openModal("Edit Bookmark");
       editingId=item.id;
       titleIn.value=item.title||"";
       urlIn.value=item.url||"";
-      renderFolderSelect(item.folderId||"");
+      buildFolderSelect(item.folderId||null);
     };
-    // move
     li.querySelector(".moveBtn").onclick=e=>{
       e.stopPropagation();
+      closeOpenMenu();
       openModal("Move Bookmark");
       editingId=item.id;
       titleIn.value=item.title||"";
       urlIn.value=item.url||"";
-      renderFolderSelect(item.folderId||"");
+      buildFolderSelect(item.folderId||null);
     };
+    li.querySelector(".copyBtn").onclick=async e=>{
+      e.stopPropagation();
+      try{await navigator.clipboard.writeText(item.url);}catch{}
+      closeOpenMenu();
+    };
+    li.querySelector(".delBtn").onclick=e=>{
+      e.stopPropagation();
+      closeOpenMenu();
+      items=items.filter(x=>x.id!==item.id);
+      saveItems();renderList();
+    };
+
     list.appendChild(li);
   });
 } // end
+
 // modal
-function openModal(t="Add Bookmark"){modalTitle.textContent=t;dim.style.display="flex";setTimeout(()=>urlIn.focus(),30);} // end
-function closeModal(){dim.style.display="none";titleIn.value="";urlIn.value="";editingId=null;} // end
+function openModal(t="Add Bookmark"){
+  closeOpenMenu();
+  modalTitle.textContent=t;
+  buildFolderSelect(null);
+  dim.style.display="flex";
+  setTimeout(()=>urlIn.focus(),30);
+} // end
+function closeModal(){dim.style.display="none";titleIn.value="";urlIn.value="";editingId=null;cSel.classList.remove("open");} // end
 document.getElementById("cancelBtn").onclick=closeModal;
 document.getElementById("saveBtn").onclick=()=>{
   const url=urlIn.value.trim();
   if(!isURL(url)){alert("URL must start with http(s)://");return;}
   const title=titleIn.value.trim();
-  const folderId=folderIn.value||null;
+  const folderId=(cSelValue||null);
   if(editingId){
     const i=items.findIndex(x=>x.id===editingId);
     if(i>-1){items[i].title=title;items[i].url=url;items[i].folderId=folderId;}
@@ -321,10 +348,13 @@ document.getElementById("saveBtn").onclick=()=>{
   }
   saveItems();renderList();closeModal();
 }; // end
-fab.onclick=()=>{openModal("Add Bookmark");renderFolderSelect();}; // end
+fab.onclick=()=>{closeOpenMenu();openModal("Add Bookmark");}; // end
+
+function closeOpenMenu(){ if(openMenuRef){openMenuRef.classList.remove("open"); openMenuRef=null;} } // end
+
 // boot
 renderChips();renderList();
-})(); 
+})();
 </script>
 </body>
 </html>
