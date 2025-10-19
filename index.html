@@ -89,6 +89,11 @@ input{width:100%;padding:12px 14px;border-radius:6px;border:1px solid var(--ring
 .cselect .opt:hover{background:rgba(0,0,0,.06);}
 .cselect .opt:active{background:rgba(0,0,0,.12);}
 .cselect .opt.muted{color:#555;font-weight:500;}
+  input:focus {
+  outline: none !important;           /* เอาเส้นขอบ default ออก */
+  box-shadow: none !important;        /* ปิดเงาเน้น */
+  border-color: var(--ring) !important; /* ใช้สีขอบปกติแทน */
+  }
 </style>
 </head>
 <body>
