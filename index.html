@@ -5,6 +5,15 @@
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
 <title>Bookmarks</title>
 <style>
+  /* toast */
+.toast{
+  position: fixed; left:50%; bottom:22px; transform: translateX(-50%);
+  background:#111; color:#fff; border:1px solid var(--ring);
+  padding:10px 14px; border-radius:8px; z-index:2000;
+  opacity:0; pointer-events:none; transition:opacity .18s ease;
+  max-width: calc(100% - 40px); text-align:center; box-shadow:0 10px 26px rgba(0,0,0,.35);
+}
+.toast.show{ opacity:1; }
 :root{--bg:#000;--text:#fff;--muted:rgba(255,255,255,.65);--ring:rgba(255,255,255,.14);}
 *{box-sizing:border-box;font-family:-apple-system,system-ui,Segoe UI,Roboto,sans-serif;font-size:15.5px;line-height:1.6;-webkit-tap-highlight-color:transparent;}
 body{margin:0;background:var(--bg);color:var(--text);}
@@ -360,6 +369,37 @@ function closeOpenMenu(){ if(openMenuRef){openMenuRef.classList.remove("open"); 
 // boot
 renderChips();renderList();
 })();
+</script>
+  <div id="toast" class="toast" aria-live="polite"></div>
+  <script>
+// ...อยู่ใน <script> เดิมของคุณ เพิ่มฟังก์ชันนี้ไว้ตอนต้น ๆ ได้เลย
+function toast(msg, dur=1800){
+  const el = document.getElementById('toast');
+  if(!el) return;
+  el.textContent = msg;
+  el.classList.add('show');
+  clearTimeout(el._t);
+  el._t = setTimeout(()=> el.classList.remove('show'), dur);
+}
+
+// --------- แก้ส่วนบันทึก (แทนที่บรรทัดที่ใช้ alert เดิม) ---------
+document.getElementById("saveBtn").onclick=()=>{
+  const url=urlIn.value.trim();
+  if(!isURL(url)){
+    // เดิม: alert("URL must start with http(s)://");
+    toast("URL must start with http(s)://");   // << เปลี่ยนเป็น toast
+    return;
+  }
+  const title=titleIn.value.trim();
+  const folderId=(cSelValue||null);
+  if(editingId){
+    const i=items.findIndex(x=>x.id===editingId);
+    if(i>-1){items[i].title=title;items[i].url=url;items[i].folderId=folderId;}
+  }else{
+    items.unshift({id:Date.now()+Math.random().toString(36).slice(2,8),title,url,fav:false,ts:Date.now(),folderId});
+  }
+  saveItems();renderList();closeModal();
+};
 </script>
 </body>
 </html>
