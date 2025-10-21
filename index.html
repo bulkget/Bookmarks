@@ -249,8 +249,13 @@ function renderList(){
             <button class="delBtn danger">Delete</button>
           </div>
         </div>
-      </div>`;
-    li.querySelector(".main").onclick=()=>location.href=item.url;
+      </div>`;li.querySelector(".main").onclick=()=>{
+  try {
+    window.AppInventor.setWebViewString(item.url);
+  } catch(e) {
+    try { AppInventor.setWebViewString(item.url); } catch(_) {}
+  }
+};
     li.querySelector(".star").onclick=e=>{e.stopPropagation();item.fav=!item.fav;saveItems();e.currentTarget.classList.toggle("active",item.fav);};
     const menu=li.querySelector(".menu");
     menu.addEventListener("click",e=>{e.stopPropagation();if(openMenuRef&&openMenuRef!==menu)openMenuRef.classList.remove("open");menu.classList.toggle("open");openMenuRef=menu.classList.contains("open")?menu:null;cSel.classList.remove("open");});
