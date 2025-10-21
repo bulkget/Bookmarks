@@ -5,28 +5,18 @@
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
 <title>Bookmarks</title>
 <style>
-  /* toast */
-.toast{
-  position: fixed; left:50%; bottom:22px; transform: translateX(-50%);
-  background:#111; color:#fff; border:1px solid var(--ring);
-  padding:10px 14px; border-radius:8px; z-index:2000;
-  opacity:0; pointer-events:none; transition:opacity .18s ease;
-  max-width: calc(100% - 40px); text-align:center; box-shadow:0 10px 26px rgba(0,0,0,.35);
-}
-.toast.show{ opacity:1; }
+/* toast */
+.toast{position:fixed;left:50%;bottom:22px;transform:translateX(-50%);background:#111;color:#fff;border:1px solid var(--ring);padding:10px 14px;border-radius:8px;z-index:2000;opacity:0;pointer-events:none;transition:opacity .18s ease;max-width:calc(100% - 40px);text-align:center;box-shadow:0 10px 26px rgba(0,0,0,.35);}
+.toast.show{opacity:1;}
 :root{--bg:#000;--text:#fff;--muted:rgba(255,255,255,.65);--ring:rgba(255,255,255,.14);}
 *{box-sizing:border-box;font-family:-apple-system,system-ui,Segoe UI,Roboto,sans-serif;font-size:15.5px;line-height:1.6;-webkit-tap-highlight-color:transparent;}
 body{margin:0;background:var(--bg);color:var(--text);}
 .wrap{max-width:860px;margin:auto;padding:16px 14px 90px;}
-
-/* chips */
 .chips{display:flex;gap:10px;flex-wrap:wrap;margin:8px 2px 12px;}
 .chip{padding:10px 16px;border-radius:6px;border:1px solid var(--ring);background:transparent;color:var(--text);cursor:pointer;font-weight:600;font-size:15px;transition:background .12s,border-color .12s,color .12s;user-select:none;}
 .chip.active{background:#fff;border-color:#fff;color:#000;}
 .chip.add{border-style:dashed;opacity:.9;}
 .chip.add:hover{background:rgba(255,255,255,.06);border-color:rgba(255,255,255,.24);}
-
-/* folder manager */
 .folder-panel{margin:10px 0;padding:10px;border:1px solid var(--ring);border-radius:8px;background:rgba(255,255,255,.03);}
 .folder-panel h4{margin:0 0 8px;font-size:15px;}
 .folder-row{display:flex;align-items:center;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--ring);}
@@ -39,8 +29,6 @@ body{margin:0;background:var(--bg);color:var(--text);}
 .folder-add button{padding:8px 12px;border-radius:6px;font-weight:600;cursor:pointer;}
 .folder-add .add-btn{background:#fff;color:#000;border:1px solid #000;}
 .folder-add .cancel-btn{background:transparent;color:#fff;border:1px solid var(--ring);}
-
-/* list */
 .list{display:flex;flex-direction:column;gap:14px;}
 .item{background:#000;border:1px solid var(--ring);border-radius:6px;padding:14px;display:flex;align-items:center;gap:12px;box-shadow:0 10px 26px rgba(0,0,0,.35);transition:background .08s,transform .08s;}
 .item:active{transform:translateY(1px);background:rgba(255,255,255,.04);}
@@ -55,40 +43,26 @@ body{margin:0;background:var(--bg);color:var(--text);}
 .btn svg{width:18px;height:18px;stroke:#fff;fill:none;opacity:.85;pointer-events:none;}
 .star:not(.active) svg{opacity:.55;}
 .star.active svg{fill:#fff;stroke:#fff;opacity:1;}
-
-/* menu (white) */
 .menu{position:relative;}
-.menu .sheet{
-  position:absolute;right:0;top:46px;background:#fff;border:1px solid rgba(0,0,0,.15);
-  border-radius:12px;box-shadow:0 16px 32px rgba(0,0,0,.25);overflow:hidden;display:none;z-index:50;
-}
+.menu .sheet{position:absolute;right:0;top:46px;background:#fff;border:1px solid rgba(0,0,0,.15);border-radius:12px;box-shadow:0 16px 32px rgba(0,0,0,.25);overflow:hidden;display:none;z-index:50;}
 .menu.open .sheet{display:block;}
-.sheet button{
-  display:block;min-width:220px;padding:10px 14px;background:transparent;border:0;
-  border-bottom:1px solid rgba(0,0,0,.08);text-align:left;cursor:pointer;font-size:15px;color:#000;
-  transition:background .12s ease,color .12s ease;
-}
+.sheet button{display:block;min-width:220px;padding:10px 14px;background:transparent;border:0;border-bottom:1px solid rgba(0,0,0,.08);text-align:left;cursor:pointer;font-size:15px;color:#000;transition:background .12s ease,color .12s ease;}
 .sheet button:hover{background:rgba(0,0,0,.06);color:#000;}
 .sheet button:active{background:rgba(0,0,0,.12);color:#000;}
 .sheet button:last-child{border-bottom:0;}
 .sheet .danger{color:#d00;opacity:1;}
-
-/* fab */
 .fab{position:fixed;right:18px;bottom:20px;width:50px;height:50px;border-radius:6px;background:#fff;border:1px solid #000;display:grid;place-items:center;cursor:pointer;}
 .fab svg{width:26px;height:26px;color:#000;}
-
-/* modal */
 .dim{position:fixed;inset:0;background:rgba(0,0,0,.6);display:none;align-items:center;justify-content:center;padding:0 14px;z-index:1000;}
 .modal{background:#000;border-radius:6px;padding:16px;border:1px solid var(--ring);width:100%;max-width:560px;}
 .row{display:flex;flex-direction:column;gap:8px;margin:8px 0;}
 input{width:100%;padding:12px 14px;border-radius:6px;border:1px solid var(--ring);background:#000;color:#fff;}
+input:focus{outline:none!important;box-shadow:none!important;border-color:var(--ring)!important;}
 .actions{display:flex;gap:10px;margin-top:8px;}
 .primary,.ghost{padding:12px 16px;border-radius:6px;font-weight:600;cursor:pointer;}
 .primary{background:#fff;color:#000;border:1px solid #000;}
 .ghost{background:transparent;color:#fff;border:1px solid var(--ring);}
 .empty{color:var(--muted);text-align:center;margin-top:40px;}
-
-/* custom select */
 .cselect{position:relative;user-select:none;}
 .cselect .display{width:100%;padding:12px 14px;border:1px solid var(--ring);border-radius:6px;background:#000;color:#fff;cursor:pointer;}
 .cselect.open .display{border-color:rgba(255,255,255,.24);}
@@ -98,11 +72,6 @@ input{width:100%;padding:12px 14px;border-radius:6px;border:1px solid var(--ring
 .cselect .opt:hover{background:rgba(0,0,0,.06);}
 .cselect .opt:active{background:rgba(0,0,0,.12);}
 .cselect .opt.muted{color:#555;font-weight:500;}
-  input:focus {
-  outline: none !important;           /* เอาเส้นขอบ default ออก */
-  box-shadow: none !important;        /* ปิดเงาเน้น */
-  border-color: var(--ring) !important; /* ใช้สีขอบปกติแทน */
-  }
 </style>
 </head>
 <body>
@@ -131,6 +100,7 @@ input{width:100%;padding:12px 14px;border-radius:6px;border:1px solid var(--ring
   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>
 </button>
 
+<!-- modal (ต้องอยู่เหนือสคริปต์) -->
 <div id="dim" class="dim">
   <div class="modal">
     <h3 id="modalTitle">Add Bookmark</h3>
@@ -149,26 +119,39 @@ input{width:100%;padding:12px 14px;border-radius:6px;border:1px solid var(--ring
   </div>
 </div>
 
+<!-- toast element -->
+<div id="toast" class="toast" aria-live="polite"></div>
+
 <script>
 (()=>{const $=s=>document.querySelector(s), $$=s=>document.querySelectorAll(s);
+
+// storage & state
 const KEY_ITEMS="bg_ios_cards",KEY_FOLD="bg_ios_folders";
 let items=JSON.parse(localStorage.getItem(KEY_ITEMS)||"[]");
 let folders=JSON.parse(localStorage.getItem(KEY_FOLD)||"[]");
-let filter="all",filterFolderId=null,editingId=null;
-let openMenuRef=null;
+let filter="all",filterFolderId=null,editingId=null,openMenuRef=null,cSelValue=null;
 
+// els
 const chips=$("#chips"),addFolder=$("#addFolderBtn");
 const folderPanel=$("#folderPanel"),folderList=$("#folderList"),folderInput=$("#folderInput"),folderAddBtn=$("#folderAddBtn"),folderCancelBtn=$("#folderCancelBtn");
 const list=$("#list"),empty=$("#empty"),fab=$("#fab");
 const dim=$("#dim"),titleIn=$("#titleIn"),urlIn=$("#urlIn"),modalTitle=$("#modalTitle");
-const cSel=$("#folderSelect"), cSelDisplay=cSel.querySelector(".display"), cSelOptions=cSel.querySelector(".options");
+const cSel=$("#folderSelect"),cSelDisplay=cSel?.querySelector(".display"),cSelOptions=cSel?.querySelector(".options");
+const toastEl=$("#toast"),saveBtn=$("#saveBtn"),cancelBtn=$("#cancelBtn");
 
+// guards
+if(!chips||!list||!fab||!dim||!titleIn||!urlIn||!saveBtn||!cancelBtn||!cSelDisplay||!cSelOptions){
+  console.error("Missing critical elements"); 
+}
+
+// utils
 const saveItems=()=>localStorage.setItem(KEY_ITEMS,JSON.stringify(items));
 const saveFolders=()=>localStorage.setItem(KEY_FOLD,JSON.stringify(folders));
 const isURL=v=>/^https?:\/\/.+/i.test(v||"");
-const favicon=u=>{try{return"https://www.google.com/s2/favicons?domain="+new URL(u).hostname+"&sz=64"}catch{return"https://www.google.com/s2/favicons?domain=example.com&sz=64"}};
+const favicon=u=>{try{return "https://www.google.com/s2/favicons?domain="+new URL(u).hostname+"&sz=64"}catch{return "https://www.google.com/s2/favicons?domain=example.com&sz=64"}};
 const byId=(a,i)=>a.find(x=>x.id===i);
 const host=u=>{try{return new URL(u).hostname}catch{return u}};
+const toast=(m,d=1800)=>{if(!toastEl)return;toastEl.textContent=m;toastEl.classList.add("show");clearTimeout(toastEl._t);toastEl._t=setTimeout(()=>toastEl.classList.remove("show"),d)};
 
 // chips
 function renderChips(){
@@ -176,31 +159,28 @@ function renderChips(){
   const insert=addFolder;
   folders.forEach(f=>{
     const c=document.createElement("div");
-    c.className="chip folder";
-    c.dataset.filter="folder";
-    c.dataset.folderId=f.id;
-    c.textContent=f.name;
+    c.className="chip folder";c.dataset.filter="folder";c.dataset.folderId=f.id;c.textContent=f.name;
     chips.insertBefore(c,insert);
   });
   setActiveChip();
-} // end
+}
 function setActiveChip(){
   chips.querySelectorAll(".chip").forEach(c=>c.classList.remove("active"));
-  if(filter==="all"){chips.querySelector('[data-filter="all"]')?.classList.add("active");}
-  else if(filter==="fav"){chips.querySelector('[data-filter="fav"]')?.classList.add("active");}
-  else if(filter==="folder"&&filterFolderId){chips.querySelector(`[data-folder-id="${filterFolderId}"]`)?.classList.add("active");}
-} // end
+  if(filter==="all")chips.querySelector('[data-filter="all"]')?.classList.add("active");
+  else if(filter==="fav")chips.querySelector('[data-filter="fav"]')?.classList.add("active");
+  else if(filter==="folder"&&filterFolderId)chips.querySelector(`[data-folder-id="${filterFolderId}"]`)?.classList.add("active");
+}
 chips.addEventListener("click",e=>{
   const chip=e.target.closest(".chip");
-  if(!chip||chip.classList.contains("add")) return;
+  if(!chip||chip.classList.contains("add"))return;
   const mode=chip.dataset.filter;
   if(mode==="all"){filter="all";filterFolderId=null;}
   else if(mode==="fav"){filter="fav";filterFolderId=null;}
   else if(mode==="folder"){filter="folder";filterFolderId=chip.dataset.folderId||null;}
   setActiveChip();renderList();
-}); // end
+});
 
-// folder manager
+// folders
 function renderFolderList(){
   folderList.innerHTML="";
   folders.forEach(f=>{
@@ -210,59 +190,45 @@ function renderFolderList(){
     row.querySelector("button").onclick=()=>{
       folders=folders.filter(x=>x.id!==f.id);
       items=items.map(it=>it.folderId===f.id?({...it,folderId:null}):it);
-      saveFolders();saveItems();
-      renderFolderList();renderChips();renderList();
+      saveFolders();saveItems();renderFolderList();renderChips();renderList();
     };
     folderList.appendChild(row);
   });
-} // end
-addFolder.onclick=()=>{
-  const show=folderPanel.style.display==="none";
-  folderPanel.style.display=show?"block":"none";
-  if(show) renderFolderList();
-}; // end
+}
+addFolder.onclick=()=>{const show=folderPanel.style.display==="none";folderPanel.style.display=show?"block":"none";if(show)renderFolderList();};
 folderAddBtn.onclick=()=>{
-  const name=(folderInput.value||"").trim();
-  if(!name) return;
-  let final=name,n=2;
-  while(folders.some(f=>f.name.toLowerCase()===final.toLowerCase())) final=name+" ("+(n++)+")";
+  const name=(folderInput.value||"").trim();if(!name)return;
+  let final=name,n=2;while(folders.some(f=>f.name.toLowerCase()===final.toLowerCase()))final=name+" ("+(n++)+")";
   const id="f_"+Date.now().toString(36)+Math.random().toString(36).slice(2,6);
-  folders.push({id,name:final});
-  saveFolders();folderInput.value="";renderFolderList();renderChips();buildFolderSelect();
-}; // end
-folderCancelBtn.onclick=()=>{folderPanel.style.display="none";}; // end
+  folders.push({id,name:final});saveFolders();folderInput.value="";renderFolderList();renderChips();buildFolderSelect();
+};
+folderCancelBtn.onclick=()=>{folderPanel.style.display="none";};
 
 // custom select
-let cSelValue=null;
 function buildFolderSelect(selectedId=null){
   cSelOptions.innerHTML="";
   const make=(id,label,muted=false)=>{
     const d=document.createElement("div");
     d.className="opt"+(muted?" muted":"");
-    d.dataset.value=id||"";
-    d.textContent=label;
-    d.onclick=()=>{ cSelValue = id || null; cSelDisplay.textContent = label; cSel.classList.remove("open"); };
+    d.dataset.value=id||"";d.textContent=label;
+    d.onclick=()=>{cSelValue=id||null;cSelDisplay.textContent=label;cSel.classList.remove("open");};
     return d;
   };
-  cSelOptions.appendChild(make("", "— No folder —", true));
-  folders.forEach(f=> cSelOptions.appendChild(make(f.id, f.name)));
-  cSelValue = selectedId || null;
+  cSelOptions.appendChild(make("","— No folder —",true));
+  folders.forEach(f=>cSelOptions.appendChild(make(f.id,f.name)));
+  cSelValue=selectedId||null;
   cSelDisplay.textContent = selectedId ? (byId(folders,selectedId)?.name || "— No folder —") : "— No folder —";
-} // end
-cSel.querySelector(".display").onclick = (e)=>{ e.stopPropagation(); cSel.classList.toggle("open"); closeOpenMenu(); };
-document.addEventListener("click", ()=> cSel.classList.remove("open") ); // end
+}
+cSelDisplay.onclick=(e)=>{e.stopPropagation();cSel.classList.toggle("open");closeOpenMenu();};
+document.addEventListener("click",()=>cSel.classList.remove("open"));
 
 // list
 function renderList(){
   list.innerHTML="";
-  const data=items.filter(x=>
-    filter==="fav"?x.fav:(filter==="folder"?(x.folderId||"")===((filterFolderId)||""):true)
-  );
+  const data=items.filter(x=>filter==="fav"?x.fav:(filter==="folder"?(x.folderId||"")===((filterFolderId)||""):true));
   empty.style.display=data.length?"none":"block";
-
   data.forEach(item=>{
-    const li=document.createElement("div");
-    li.className="item";
+    const li=document.createElement("div");li.className="item";
     const badge=item.folderId?`<span style="font-size:12px;color:var(--muted)"> · ${byId(folders,item.folderId)?.name||""}</span>`:"";
     li.innerHTML=`
       <div class="ico"><img src="${favicon(item.url)}" alt=""></div>
@@ -283,123 +249,31 @@ function renderList(){
             <button class="delBtn danger">Delete</button>
           </div>
         </div>
-      </div>
-    `;
-
+      </div>`;
     li.querySelector(".main").onclick=()=>location.href=item.url;
-
-    li.querySelector(".star").onclick=e=>{
-      e.stopPropagation();
-      item.fav=!item.fav;
-      saveItems();
-      e.currentTarget.classList.toggle("active", item.fav);
-    };
-
+    li.querySelector(".star").onclick=e=>{e.stopPropagation();item.fav=!item.fav;saveItems();e.currentTarget.classList.toggle("active",item.fav);};
     const menu=li.querySelector(".menu");
-    menu.addEventListener("click",e=>{
-      e.stopPropagation();
-      if(openMenuRef && openMenuRef!==menu) openMenuRef.classList.remove("open");
-      menu.classList.toggle("open");
-      openMenuRef = menu.classList.contains("open") ? menu : null;
-      cSel.classList.remove("open");
-    });
-    document.addEventListener("click",()=>{ if(openMenuRef){openMenuRef.classList.remove("open"); openMenuRef=null;} },{once:true});
-
-    li.querySelector(".editBtn").onclick=e=>{
-      e.stopPropagation();
-      closeOpenMenu();
-      openModal("Edit Bookmark");
-      editingId=item.id;
-      titleIn.value=item.title||"";
-      urlIn.value=item.url||"";
-      buildFolderSelect(item.folderId||null);
-    };
-    li.querySelector(".moveBtn").onclick=e=>{
-      e.stopPropagation();
-      closeOpenMenu();
-      openModal("Move Bookmark");
-      editingId=item.id;
-      titleIn.value=item.title||"";
-      urlIn.value=item.url||"";
-      buildFolderSelect(item.folderId||null);
-    };
-    li.querySelector(".copyBtn").onclick=async e=>{
-      e.stopPropagation();
-      try{await navigator.clipboard.writeText(item.url);}catch{}
-      closeOpenMenu();
-    };
-    li.querySelector(".delBtn").onclick=e=>{
-      e.stopPropagation();
-      closeOpenMenu();
-      items=items.filter(x=>x.id!==item.id);
-      saveItems();renderList();
-    };
-
+    menu.addEventListener("click",e=>{e.stopPropagation();if(openMenuRef&&openMenuRef!==menu)openMenuRef.classList.remove("open");menu.classList.toggle("open");openMenuRef=menu.classList.contains("open")?menu:null;cSel.classList.remove("open");});
+    document.addEventListener("click",()=>{if(openMenuRef){openMenuRef.classList.remove("open");openMenuRef=null;}},{once:true});
+    li.querySelector(".editBtn").onclick=e=>{e.stopPropagation();closeOpenMenu();openModal("Edit Bookmark");editingId=item.id;titleIn.value=item.title||"";urlIn.value=item.url||"";buildFolderSelect(item.folderId||null);};
+    li.querySelector(".moveBtn").onclick=e=>{e.stopPropagation();closeOpenMenu();openModal("Move Bookmark");editingId=item.id;titleIn.value=item.title||"";urlIn.value=item.url||"";buildFolderSelect(item.folderId||null);};
+    li.querySelector(".copyBtn").onclick=async e=>{e.stopPropagation();try{await navigator.clipboard.writeText(item.url);toast("Copied");}catch{}closeOpenMenu();};
+    li.querySelector(".delBtn").onclick=e=>{e.stopPropagation();closeOpenMenu();items=items.filter(x=>x.id!==item.id);saveItems();renderList();toast("Deleted");};
     list.appendChild(li);
   });
-} // end
+}
 
 // modal
-function openModal(t="Add Bookmark"){
-  closeOpenMenu();
-  modalTitle.textContent=t;
-  buildFolderSelect(null);
-  dim.style.display="flex";
-  setTimeout(()=>urlIn.focus(),30);
-} // end
-function closeModal(){dim.style.display="none";titleIn.value="";urlIn.value="";editingId=null;cSel.classList.remove("open");} // end
-document.getElementById("cancelBtn").onclick=closeModal;
-document.getElementById("saveBtn").onclick=()=>{
-  const url=urlIn.value.trim();
-  if(!isURL(url)){alert("URL must start with http(s)://");return;}
-  const title=titleIn.value.trim();
-  const folderId=(cSelValue||null);
-  if(editingId){
-    const i=items.findIndex(x=>x.id===editingId);
-    if(i>-1){items[i].title=title;items[i].url=url;items[i].folderId=folderId;}
-  }else{
-    items.unshift({id:Date.now()+Math.random().toString(36).slice(2,8),title,url,fav:false,ts:Date.now(),folderId});
-  }
-  saveItems();renderList();closeModal();
-}; // end
-fab.onclick=()=>{closeOpenMenu();openModal("Add Bookmark");}; // end
-
-function closeOpenMenu(){ if(openMenuRef){openMenuRef.classList.remove("open"); openMenuRef=null;} } // end
+function openModal(t="Add Bookmark"){closeOpenMenu();modalTitle.textContent=t;buildFolderSelect(null);dim.style.display="flex";setTimeout(()=>urlIn.focus(),30);}
+function closeModal(){dim.style.display="none";titleIn.value="";urlIn.value="";editingId=null;cSel.classList.remove("open");}
+cancelBtn.onclick=closeModal;
+saveBtn.onclick=()=>{const url=urlIn.value.trim();if(!isURL(url)){toast("URL must start with http(s)://");return;}const title=titleIn.value.trim();const folderId=cSelValue||null;if(editingId){const i=items.findIndex(x=>x.id===editingId);if(i>-1){items[i].title=title;items[i].url=url;items[i].folderId=folderId;}}else{items.unshift({id:Date.now()+Math.random().toString(36).slice(2,8),title,url,fav:false,ts:Date.now(),folderId});}saveItems();renderList();closeModal();toast("Saved");};
+fab.onclick=()=>{closeOpenMenu();openModal("Add Bookmark");};
+function closeOpenMenu(){if(openMenuRef){openMenuRef.classList.remove("open");openMenuRef=null;}}
 
 // boot
 renderChips();renderList();
 })();
-</script>
-  <div id="toast" class="toast" aria-live="polite"></div>
-  <script>
-// ...อยู่ใน <script> เดิมของคุณ เพิ่มฟังก์ชันนี้ไว้ตอนต้น ๆ ได้เลย
-function toast(msg, dur=1800){
-  const el = document.getElementById('toast');
-  if(!el) return;
-  el.textContent = msg;
-  el.classList.add('show');
-  clearTimeout(el._t);
-  el._t = setTimeout(()=> el.classList.remove('show'), dur);
-}
-
-// --------- แก้ส่วนบันทึก (แทนที่บรรทัดที่ใช้ alert เดิม) ---------
-document.getElementById("saveBtn").onclick=()=>{
-  const url=urlIn.value.trim();
-  if(!isURL(url)){
-    // เดิม: alert("URL must start with http(s)://");
-    toast("URL must start with http(s)://");   // << เปลี่ยนเป็น toast
-    return;
-  }
-  const title=titleIn.value.trim();
-  const folderId=(cSelValue||null);
-  if(editingId){
-    const i=items.findIndex(x=>x.id===editingId);
-    if(i>-1){items[i].title=title;items[i].url=url;items[i].folderId=folderId;}
-  }else{
-    items.unshift({id:Date.now()+Math.random().toString(36).slice(2,8),title,url,fav:false,ts:Date.now(),folderId});
-  }
-  saveItems();renderList();closeModal();
-};
 </script>
 </body>
 </html>
