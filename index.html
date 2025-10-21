@@ -275,5 +275,25 @@ function closeOpenMenu(){if(openMenuRef){openMenuRef.classList.remove("open");op
 renderChips();renderList();
 })();
 </script>
+  <script>
+(function(){
+  function sendToWV1(url){
+    if(!url) return;
+    try {
+      window.AppInventor.setWebViewString(url);
+    } catch(e){
+      try { AppInventor.setWebViewString(url); } catch(_) {}
+    }
+  }
+
+  // ดักคลิกเฉพาะลิงก์ภายในบุ๊กมาร์ก
+  document.addEventListener('click', function(e){
+    const a = e.target.closest('a[href]');
+    if(!a) return;
+    e.preventDefault();              // กันไม่ให้เปิดใน WV2
+    sendToWV1(a.href);               // ส่งลิงก์ไปให้ Kodular
+  });
+})();
+    </script>
 </body>
 </html>
